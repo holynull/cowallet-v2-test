@@ -59,7 +59,7 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 - **issue 17 真实执行换钥匙失败（本轮新增）**：用户授权「真实验证一次换钥匙」并经「再试一次」完成第二次真实尝试——两次均通过恢复密码校验 + Face ID 确认后失败，服务端返回 `rotation_backup_proof_required`；失败屏仅「再试一次 / 关闭」，无原因说明、无替代路径；旧钥匙仍有效（未损坏）。根因推测：服务端 `has_backup_proof`（backup_shard_hash）门槛未满足，需产品/后端确认正常完成备份验证后是否应具备。已写入飞书 Base 序号 17（1 张失败屏截图）+ 本地 finding `FINDING-rotation-execution-failed.md`。
 - **飞书 Base 由用户整理**：Enclave 代码审查 6/7/8 三条已从 issue 表移除（Base 现 13 条）；issue 1 文档标注改为「已修复」。本地快照已同步。
 - **测试报告重新生成**：块级编辑不可靠（DELETE 404、单元格需内部 text block），按用户指示改为「md 为唯一事实源 + `regenerate-report-doc.mjs` 重新导入」。当前文档
-  `https://catwallet.jp.larksuite.com/docx/QRxDdacQJov3nfxXMopjC0UDpCh`（已核对内容=本地 md，14 条、含 issue 17）；上一版 `IDFmdq4o4oLRQuxmhFgj1KVQpHe` 已删除。
+  `https://catwallet.jp.larksuite.com/docx/TxJdd3FERov2A7xemdjjMGFepOn`（14 条、含 issue 17、**无 Enclave 代码审查项**）；上一版 `QRxDdacQJov3nfxXMopjC0UDpCh` 已删除。
 
 ---
 
