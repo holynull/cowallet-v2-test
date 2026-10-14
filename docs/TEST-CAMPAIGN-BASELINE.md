@@ -22,7 +22,7 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 | UDID | `00008110-000A6D3C3450401E`（`IOS_UDID`） |
 | 被测 App | `app.getcowallet.wallet` v1.0.2，**build 2610132055**（TestFlight 自动从 2610121802 更新，2026-10-14 会话内发生） |
 | WDA | 长驻服务 `http://127.0.0.1:8100/status`，**复用**，不随意 stop/restart（`npm run wda:stop` 仅手动清理） |
-| 驱动 | Midscene（iOS 走 Appium + WebDriverAgent），视觉模型 **DeepSeek `deepseek-v4-1-flash-260910`**（`.env` 的 `MIDSCENE_MODEL_NAME`，已 git-ignore；比原 Doubao turbo 快一个量级，aiQuery/aiAct 均已真机验证；如需开思考可用 `MIDSCENE_MODEL_REASONING_ENABLED=true` + `MIDSCENE_MODEL_REASONING_EFFORT=medium`，Ark 已实测接受） |
+| 驱动 | Midscene（iOS 走 Appium + WebDriverAgent），视觉模型 **DeepSeek `deepseek-v4-1-flash-260910`**（`.env` 的 `MIDSCENE_MODEL_NAME`，已 git-ignore；比原 Doubao turbo 快一个量级，aiQuery/aiAct 均已真机验证）。**思考/防 429 已启用并真机实测**：`MIDSCENE_MODEL_REASONING_ENABLED=true` + `MIDSCENE_MODEL_REASONING_EFFORT=medium`（请求体实测 `{"thinking":{"type":"enabled"},"reasoning_effort":"medium"}`），`MIDSCENE_MODEL_RETRY_COUNT=8` + `RETRY_INTERVAL=8000` + `TIMEOUT=120000`（429 会自动重试，无指数退避）。注意 midscene 默认对 deepseek 关思考，只设 EFFORT 不设 ENABLED 不会生效；官方清单只列 `deepseek-v4-flash-vision-exp`，Ark 4.1 新版已开视觉，文档滞后于实测，以实测为准 |
 | 钱包地址 | EOA `0x7C0C85034Eb214EC6D5C8E5253BDC44f6A024821`（Ethereum 主网） |
 | 链上余额 | ≈ **0.0039777 ETH** ≈ 总资产 **$9.97**（2026-10-14 16:00，多 RPC 取最大值） |
 | 测试账号 | 邮箱 `reinpassion@gmail.com`（OTP 验证码发到该邮箱，真人转述）；钱包密码在 `.env`（`TEST_WALLET_PASSWORD`，**永不写入文档/报告/提交**） |
