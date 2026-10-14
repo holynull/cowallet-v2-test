@@ -209,6 +209,9 @@ export function createClient(token) {
     async rawGet(apiPath) {
       return request('GET', apiPath);
     },
+    async rawPatch(apiPath, body) {
+      return request('PATCH', apiPath, body);
+    },
   };
 }
 

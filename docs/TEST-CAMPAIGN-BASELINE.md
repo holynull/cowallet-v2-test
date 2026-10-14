@@ -4,8 +4,8 @@
 > 本文件是测试战役的「当前状态基线」：环境、进度、结论、待办都在这里汇总。
 > 每次会话结束，更新本文件并重跑快照，让下一个会话能无缝接续。
 
-最后更新：2026-10-14 16:00（Asia/Shanghai）
-仓库：`/Users/zhangleping/github.com/holynull/cowallet-v2-test`（`main` 尚无提交；App 源码在兄弟仓库 `../cowallet`）
+最后更新：2026-10-14 17:10（Asia/Shanghai）
+仓库：`/Users/zhangleping/github.com/holynull/cowallet-v2-test`（`main` 已有首个 commit `7a8b2f5`，未推送；App 源码在兄弟仓库 `../cowallet`）
 Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4ml7`
 本地快照：`docs/issue-tracker/issue-status.md`（`node scripts/issue-tracker/snapshot-issues.mjs` 刷新）
 
@@ -44,13 +44,16 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 
 ## 3. Issue 状态汇总（截至 2026-10-14，详见 `docs/issue-tracker/issue-status.md`）
 
-| 状态 | Issue |
+| 状态 | Issue（Base 当前 13 条） |
 | --- | --- |
-| ✅ 已验收 | 1（站内收款通知存在）、2（iCloud 第三片）、4（分片表述）、16（**无收款 PUSH**，本轮证实） |
-| 🟡 部分通过 | 3（轮换=恢复，v2 无独立轮换按钮）、5（真实转账全链路成功，但曾遇 RPC 瞬态失败） |
-| ⏳ 待确认/待产品决策 | 6/7/8（Enclave 代码审查，非真机用例）、9–13（低/中优先，本地 finding 已归档）、14（确认卡地址，T26 已复测）、15（AI 安全保护 not_applicable） |
+| ✅ 已验收 | 1（站内收款通知存在，Base 标注已修复）、2（iCloud 第三片）、4（分片表述）、16（**无收款 PUSH**，T29 证实） |
+| 🟡 部分通过 | 5（真实转账全链路成功，但曾遇 RPC 瞬态失败） |
+| ⏳ 待确认/待产品决策 | 3（**入口存在：设置→密钥安全→「换一套新钥匙」；实际执行未实测**）、9–13（低/中优先，本地 finding 已归档）、14（确认卡地址，T26 已复测）、15（AI 安全保护 not_applicable） |
 
-**本轮新增/更新**：issue 16 全量归档（4 张截图 + 回归备注 + 状态=已验收）；issue 1 跨端补证（角标+通知中心对照）；T29 脚本修正了「把 TestFlight 更新通知误判为收款推送」的断言问题。
+**本轮新增/更新**：
+- issue 16 全量归档（4 张截图 + 回归备注 + 状态=已验收）；issue 1 跨端补证（角标+通知中心对照）；T29 脚本修正了「把 TestFlight 更新通知误判为收款推送」的断言问题。
+- **issue 3 结论纠错**：用户发现设置 → 密钥安全 →「轮换密钥分片（上次轮换: 从未）」存在**独立轮换入口**，页面「换一套新钥匙」说明完整（三份换新/地址不变/新 24 词旧作废/Face ID 双确认/反诈提示），按钮「开始换钥匙」（执行边界，未点）/「先不换」。此前「v2 无独立轮换入口」判断有误，已在飞书 Base（record `reczz28MNNXaNbKw`，状态=待确认、4 张截图）与测试报告文档中更正。**实际执行换钥匙未授权测试**（不可逆）。
+- **飞书 Base 由用户整理**：Enclave 代码审查 6/7/8 三条已从 issue 表移除（Base 现 13 条）；issue 1 文档标注改为「已修复」。本地快照已同步。
 
 ---
 
@@ -74,12 +77,12 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 
 ## 5. 待办 / 待决策（下次会话从这里选）
 
-1. **issue 5 复测**（ETH 转账失败）：此前一次失败疑似 RPC 瞬态；现余额充足（≈$9.97），可重跑真实小额转账确认已修复。
-2. **issue 3 收尾**：确认 v2 无独立轮换入口（轮换=恢复），是否直接按现有证据验收/关单。
+1. **issue 3 实际执行验证**（待授权）：入口已证实存在，但换钥匙属不可逆操作，未实测。若用户授权，可跑一次完整换钥匙（会生成新 24 词、旧词作废），验证执行链路。
+2. **issue 5 复测**（ETH 转账失败）：此前一次失败疑似 RPC 瞬态；现余额充足（≈$9.97），可重跑真实小额转账确认已修复。
 3. **issue 15 收尾**：AI「保护这台手机」返回 `not_applicable` 死胡同，属产品 UX 缺口，等产品决策是否归档。
 4. **陌生会话「帮我转 0.01 ETH 给小明」**：语音测试混乱期间自动产生，真人未确认发起，待核实（已记入语音 finding）。
 5. **语音「查余额」却自动进入兑换流程**（未点兑换，输入框自动出现内容）：仅出现一次、上下文被污染，用户已暂停语音专项，留作以后复现。
-6. **首次 git 提交**：`main` 尚无提交，建议把 `docs/`、`findings/`、`scripts/`、`AGENTS.md` 等非 `reports/` 产物做成首个 commit，让基线跨会话/跨机器留存（需用户确认）。
+6. **git 提交未推送**：首个 commit `7a8b2f5` 已建，本次纠错增量待提交；推送远端需用户确认。
 
 ---
 

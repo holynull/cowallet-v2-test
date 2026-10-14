@@ -85,8 +85,9 @@ await LoginHandler.handleLogin({
   port,
   scope: [
     'auth:user.id:read',
-    'docx:document:readonly',
-    'drive:drive:readonly',
+    'docx:document',
+    'drive:drive',
+    'docs:document:import',
     'wiki:wiki:readonly',
     'bitable:app',
   ],
