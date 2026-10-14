@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>CoWallet 测试收款二维码</title>
+<style>
+  body { background:#ffffff; margin:0; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:-apple-system, "PingFang SC", sans-serif; }
+  #qrcode { padding:24px; background:#ffffff; border:1px solid #ccc; }
+  .addr { margin-top:16px; font-size:20px; letter-spacing:0.5px; color:#111; }
+  .hint { margin-top:8px; font-size:14px; color:#888; }
+</style>
+</head>
+<body>
+  <div id="qrcode"></div>
+  <div class="addr">0x75276A6E673B4083b640956262605955F11D767B</div>
+  <div class="hint">测试收款地址（安全接收人）</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    new QRCode(document.getElementById("qrcode"), {
+      text: "0x75276A6E673B4083b640956262605955F11D767B",
+      width: 440,
+      height: 440,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  </script>
+</body>
+</html>

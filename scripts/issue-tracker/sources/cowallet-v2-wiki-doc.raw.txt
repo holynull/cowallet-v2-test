@@ -1,0 +1,29 @@
+Cowallet v2 测试
+1、收款无消息提示。未修复。
+2、icloud 已登录，第三片提示没登录无法备份。已修复。
+d8f804f64ab75f0b45ab297f5881e1fb.png
+
+3、轮换密钥失败。已修复
+ea5974b4b22047f0cfdc3b64581bbf79.jpg
+
+4、三个分片表述不一致。已修复
+61ee275b4a6612c78b9fa75b1b61580b.png
+
+
+953c2d458cedd3b4b6408b7e3415746b.png
+
+5、ETH转账失败。
+5b28e21003c3f1d6dcd1ccef278cb64b.png
+
+6、Enclave 用在这里是合理的，但当前实现还没完全做到位。
+
+从源码看，它确实采用 AWS Nitro：通过 vsock 通信、启用 KMS Recipient attestation，并在 Enclave 内解开数据密钥。MPC 防止单个参与方独立签名，Enclave 则进一步保护服务器分片，二者互补。相关实现见  cowallet/deploy/nitro/entrypoint.sh:12–19 、 cowallet/crates/mpc2-server/src/kms.rs:305–349 。
+
+但审查发现了以下问题，路径相对于  cowallet/ ：
+│ 1 │ 🟠 HIGH   │  crates/mpc2-server/src/remote.rs  │ 243–266 │ 宿主可重放旧分片状态，配合可解密的旧备份重新获得钱包签名能力
+│ 2 │ 🟡 MEDIUM │  crates/mpc2-server/src/ledger.rs  │ 610–619 │ 恶意设备取得足以完成签名的材料后，仍可中止会话并退回额度，绕过累计限额 
+│ 3 │ 🟡 MEDIUM │  crates/mpc2-server/src/ledger.rs  │ 507–509 │ 宿主返回重复账本 ID，可覆盖 Enclave 内的记账记录，绕过进程内累计额度保护
+
+第一项需要恶意宿主＋可解密的旧备份；后两项仍需有效设备参与，并不意味着宿主单独就能签名。这些也不是 Nitro 隔离被攻破，而是应用层缺口：保护内存和验证镜像身份，不等于外部状态不会回滚、额度记账一定正确。
+
+结论基于本地  4f65ff1  源码，上述问题相关实现与  0669442  一致；尚未核实当前线上 KMS/IAM、PCR0 和启动模式，也未进行线上利用验证。此次仅作审查，没有修改代码。

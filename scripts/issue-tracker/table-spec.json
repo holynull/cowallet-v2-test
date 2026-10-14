@@ -1,0 +1,80 @@
+{
+  "defaultTableName": "Issue list",
+  "defaultViewName": "Issue List",
+  "conventions": "字段沿用同 Base 下 v1.6.4 / v1.6.7 / v1.6.8 的 issue list 命名与选项；针对《Cowallet v2 测试》文档的内容增加了 问题类型 / 文档标注状态 / 代码位置 三列（文档里既有真机问题，也有带 HIGH/MEDIUM 与文件行号的代码审查发现），并保留 平台 / 严重程度。",
+  "fields": [
+    { "field_name": "序号", "type": 1, "description": "文档条目顺序：1-5 为功能问题，6-8 为第 6 条审查发现的 3 项" },
+    { "field_name": "Issue", "type": 1, "description": "一句话标题：现象 + 影响对象" },
+    {
+      "field_name": "问题类型",
+      "type": 3,
+      "description": "区分真机测试发现与代码审查发现",
+      "property": {
+        "options": [{ "name": "功能问题" }, { "name": "代码审查" }]
+      }
+    },
+    {
+      "field_name": "平台",
+      "type": 3,
+      "description": "出现问题的一端；文档未标注时留空",
+      "property": {
+        "options": [{ "name": "iOS" }, { "name": "Android" }, { "name": "双端" }, { "name": "服务端" }]
+      }
+    },
+    {
+      "field_name": "严重程度",
+      "type": 3,
+      "description": "文档里的 HIGH/MEDIUM 折算成 高/中；资金与安全相关一律 ≥ 高",
+      "property": {
+        "options": [{ "name": "Blocker" }, { "name": "高" }, { "name": "中" }, { "name": "低" }]
+      }
+    },
+    {
+      "field_name": "文档标注状态",
+      "type": 3,
+      "description": "文档自己写的修复状态，仅作来源记录，不等于回归结论（回归结论看 回归验证状态）",
+      "property": {
+        "options": [{ "name": "未修复" }, { "name": "已修复" }, { "name": "未标注" }]
+      }
+    },
+    { "field_name": "代码位置", "type": 1, "description": "代码审查发现的文件与行号；真机问题留空" },
+    { "field_name": "APP截图", "type": 17, "description": "真机 / 文档证据截图" },
+    { "field_name": "figma截图", "type": 17, "description": "对应的设计稿截图" },
+    { "field_name": "Issue备注", "type": 1, "description": "现象、复现路径、文档原文、发现版本、来源、Linear 号" },
+    { "field_name": "影响", "type": 1, "description": "对用户或资金安全的影响 + 建议改法" },
+    {
+      "field_name": "问题归类",
+      "type": 3,
+      "description": "沿用既有 issue list 的选项",
+      "property": {
+        "options": [
+          { "name": "产品缺陷" },
+          { "name": "设计差异" },
+          { "name": "自动化/断言" },
+          { "name": "测试数据/前置条件" }
+        ]
+      }
+    },
+    {
+      "field_name": "反馈状态",
+      "type": 3,
+      "description": "开发侧状态",
+      "property": {
+        "options": [{ "name": "待反馈" }, { "name": "处理中" }, { "name": "待回归" }, { "name": "无需处理" }]
+      }
+    },
+    { "field_name": "反馈备注", "type": 1, "description": "开发回复、修复 PR、工单链接" },
+    {
+      "field_name": "回归验证状态",
+      "type": 3,
+      "description": "测试侧回归结论",
+      "property": {
+        "options": [{ "name": "待确认" }, { "name": "已验收" }, { "name": "未通过" }, { "name": "部分通过" }]
+      }
+    },
+    { "field_name": "回归备注", "type": 1, "description": "回归前置条件、复测结果、遗留风险" },
+    { "field_name": "回归截屏", "type": 17, "description": "回归时补的截图" },
+    { "field_name": "开发人员", "type": 11, "description": "对接开发" },
+    { "field_name": "创建时间", "type": 5, "description": "记录创建时间" }
+  ]
+}

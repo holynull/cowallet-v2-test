@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Local secrets and per-machine device config
+.env
+.env.*
+!.env.example
+
+# Midscene runtime cache
+midscene_run/
+
+# Per-run test artifacts (reports, summaries, screenshots, logs)
+reports/*
+!reports/.gitkeep
+
+# Installed app builds and fixtures
+*.apk
+*.aab
+*.ipa
+
+# Logs and scratch files
+*.log
+logs/
+tmp/
+temp/
+
+# OS / editor noise
+.DS_Store
+.idea/
+.vscode/
+
+# CodeGraph local index
+.codegraph/

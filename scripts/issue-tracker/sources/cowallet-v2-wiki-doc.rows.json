@@ -1,0 +1,129 @@
+{
+  "doc": {
+    "title": "Cowallet v2 测试",
+    "wikiUrl": "https://catwallet.jp.larksuite.com/wiki/A64bwgzsLi5JNQkgnGrj3Dj0pVb",
+    "documentId": "QTPgdOAq1owRtcxnrqRjSBpnpVh"
+  },
+  "fetchedAt": "2026-10-12T04:53:44.523Z",
+  "rows": [
+    {
+      "sequence": "1",
+      "type": "问题",
+      "content": "1、收款无消息提示。未修复。",
+      "docState": "未修复",
+      "level": "",
+      "codeLocation": "",
+      "screenshots": [],
+      "issueRefs": "1",
+      "source": "Cowallet v2 测试"
+    },
+    {
+      "sequence": "2",
+      "type": "问题",
+      "content": "2、icloud 已登录，第三片提示没登录无法备份。已修复。",
+      "docState": "已修复",
+      "level": "",
+      "codeLocation": "",
+      "screenshots": [
+        "01-image.png"
+      ],
+      "issueRefs": "2",
+      "source": "Cowallet v2 测试"
+    },
+    {
+      "sequence": "3",
+      "type": "问题",
+      "content": "3、轮换密钥失败。已修复",
+      "docState": "已修复",
+      "level": "",
+      "codeLocation": "",
+      "screenshots": [
+        "02-image.jpg"
+      ],
+      "issueRefs": "3",
+      "source": "Cowallet v2 测试"
+    },
+    {
+      "sequence": "4",
+      "type": "问题",
+      "content": "4、三个分片表述不一致。已修复",
+      "docState": "已修复",
+      "level": "",
+      "codeLocation": "",
+      "screenshots": [
+        "03-image.png",
+        "04-image.png"
+      ],
+      "issueRefs": "4",
+      "source": "Cowallet v2 测试"
+    },
+    {
+      "sequence": "5",
+      "type": "问题",
+      "content": "5、ETH转账失败。",
+      "docState": "未标注",
+      "level": "",
+      "codeLocation": "",
+      "screenshots": [
+        "05-image.png"
+      ],
+      "issueRefs": "5",
+      "source": "Cowallet v2 测试"
+    },
+    {
+      "sequence": "6",
+      "type": "审查说明",
+      "content": "6、Enclave 用在这里是合理的，但当前实现还没完全做到位。\n从源码看，它确实采用 AWS Nitro：通过 vsock 通信、启用 KMS Recipient attestation，并在 Enclave 内解开数据密钥。MPC 防止单个参与方独立签名，Enclave 则进一步保护服务器分片，二者互补。相关实现见  cowallet/deploy/nitro/entrypoint.sh:12–19 、 cowallet/crates/mpc2-server/src/kms.rs:305–349 。\n但审查发现了以下问题，路径相对于  cowallet/ ：",
+      "docState": "",
+      "level": "",
+      "codeLocation": "",
+      "screenshots": [],
+      "issueRefs": "6,7,8",
+      "source": "Cowallet v2 测试"
+    },
+    {
+      "sequence": "6.1",
+      "type": "审查发现",
+      "content": "宿主可重放旧分片状态，配合可解密的旧备份重新获得钱包签名能力",
+      "docState": "",
+      "level": "HIGH",
+      "codeLocation": "crates/mpc2-server/src/remote.rs 243–266",
+      "screenshots": [],
+      "issueRefs": "6",
+      "source": "Cowallet v2 测试"
+    },
+    {
+      "sequence": "6.2",
+      "type": "审查发现",
+      "content": "恶意设备取得足以完成签名的材料后，仍可中止会话并退回额度，绕过累计限额",
+      "docState": "",
+      "level": "MEDIUM",
+      "codeLocation": "crates/mpc2-server/src/ledger.rs 610–619",
+      "screenshots": [],
+      "issueRefs": "7",
+      "source": "Cowallet v2 测试"
+    },
+    {
+      "sequence": "6.3",
+      "type": "审查发现",
+      "content": "宿主返回重复账本 ID，可覆盖 Enclave 内的记账记录，绕过进程内累计额度保护",
+      "docState": "",
+      "level": "MEDIUM",
+      "codeLocation": "crates/mpc2-server/src/ledger.rs 507–509",
+      "screenshots": [],
+      "issueRefs": "8",
+      "source": "Cowallet v2 测试"
+    },
+    {
+      "sequence": "6",
+      "type": "结论",
+      "content": "第一项需要恶意宿主＋可解密的旧备份；后两项仍需有效设备参与，并不意味着宿主单独就能签名。这些也不是 Nitro 隔离被攻破，而是应用层缺口：保护内存和验证镜像身份，不等于外部状态不会回滚、额度记账一定正确。\n结论基于本地  4f65ff1  源码，上述问题相关实现与  0669442  一致；尚未核实当前线上 KMS/IAM、PCR0 和启动模式，也未进行线上利用验证。此次仅作审查，没有修改代码。",
+      "docState": "",
+      "level": "",
+      "codeLocation": "",
+      "screenshots": [],
+      "issueRefs": "6,7,8",
+      "source": "Cowallet v2 测试"
+    }
+  ]
+}
