@@ -102,6 +102,13 @@ npm run test:ios:t29              # issue 16 regression: real external ETH recei
 bash -n scripts/device/*.sh       # shell syntax check
 ```
 
+**辅助/驱动脚本（非 npm 命令）**
+
+- `npx tsx scripts/probe_state.ts` — 只读探针：连 iOS 真机截屏并用当前视觉模型输出结构化页面描述（用于验证模型配置 / 导航准备）。
+- `npx tsx scripts/rotate_verify.ts --step start|password|observe|retry|verify` — 真实密钥轮换验证的分步驱动（用户显式授权才跑；恢复密码只从 `.env TEST_WALLET_PASSWORD` 读取、不回显；Face ID 由真人完成；新助记词屏不截图）。
+
+**视觉模型切换**：`.env` 的 `MIDSCENE_MODEL_NAME` 现为 `deepseek-v4-1-flash-260910`（`MIDSCENE_MODEL_FAMILY=deepseek`；midscene 自带 DeepSeek 适配器，aiQuery/aiAct 均已真机验证，比原 Doubao turbo 快一个量级）。如需开思考：`MIDSCENE_MODEL_REASONING_ENABLED=true` + `MIDSCENE_MODEL_REASONING_EFFORT=medium`（注意 midscene 默认对 deepseek 关思考，只设 EFFORT 不设 ENABLED 不会生效；Ark 已实测接受该参数）。
+
 There is no test-runner framework here (no vitest/playwright): test cases are `tsx` scripts that exit non-zero on failure, matching the established convention in `../cowallet/blackbox-device-tests`. Prefer reusing that convention over introducing a new runner.
 
 `npm install` has not been run in this repo yet. Ask the user before installing dependencies.
