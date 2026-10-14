@@ -212,6 +212,9 @@ export function createClient(token) {
     async rawPatch(apiPath, body) {
       return request('PATCH', apiPath, body);
     },
+    async rawDelete(apiPath, body) {
+      return request('DELETE', apiPath, body);
+    },
   };
 }
 

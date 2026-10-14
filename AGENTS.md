@@ -39,6 +39,11 @@ Repository status: scaffolded by an agent on 2026-10-12; `main` still has no com
 3. 刷新本地快照 → `node scripts/issue-tracker/snapshot-issues.mjs`。
 4. 更新 `docs/TEST-CAMPAIGN-BASELINE.md` 的进度/待办部分，让下一个会话能接续。
 
+测试报告：`docs/TEST-REPORT-2026-10-14.md` 是**唯一事实源**；改报告就改这份 md，再跑
+`node scripts/issue-tracker/regenerate-report-doc.mjs` 重新导入飞书文档（返回新 document_id/URL；
+旧文档用 `DELETE /open-apis/drive/v1/files/:token?type=docx` 手动删除）。
+不要对飞书报告做块级编辑（表格行删除 404、单元格需内部 text block，不可靠）。
+
 ## Layout
 
 | Path | Purpose |

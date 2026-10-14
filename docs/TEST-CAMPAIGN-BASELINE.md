@@ -4,10 +4,13 @@
 > 本文件是测试战役的「当前状态基线」：环境、进度、结论、待办都在这里汇总。
 > 每次会话结束，更新本文件并重跑快照，让下一个会话能无缝接续。
 
-最后更新：2026-10-14 17:10（Asia/Shanghai）
+最后更新：2026-10-14 17:25（Asia/Shanghai）
 仓库：`/Users/zhangleping/github.com/holynull/cowallet-v2-test`（`main` 已有首个 commit `7a8b2f5`，未推送；App 源码在兄弟仓库 `../cowallet`）
 Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4ml7`
 本地快照：`docs/issue-tracker/issue-status.md`（`node scripts/issue-tracker/snapshot-issues.mjs` 刷新）
+测试报告文档：`docs/TEST-REPORT-2026-10-14.md` 为唯一事实源；导入飞书用
+`node scripts/issue-tracker/regenerate-report-doc.mjs`（改报告=改 md + 重跑；旧文档已删除，
+旧块级编辑脚本 update-report-doc / align-report-to-base / remove-report-rows 已废弃移除）
 
 ---
 
@@ -54,6 +57,8 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 - issue 16 全量归档（4 张截图 + 回归备注 + 状态=已验收）；issue 1 跨端补证（角标+通知中心对照）；T29 脚本修正了「把 TestFlight 更新通知误判为收款推送」的断言问题。
 - **issue 3 结论纠错**：用户发现设置 → 密钥安全 →「轮换密钥分片（上次轮换: 从未）」存在**独立轮换入口**，页面「换一套新钥匙」说明完整（三份换新/地址不变/新 24 词旧作废/Face ID 双确认/反诈提示），按钮「开始换钥匙」（执行边界，未点）/「先不换」。此前「v2 无独立轮换入口」判断有误，已在飞书 Base（record `reczz28MNNXaNbKw`，状态=待确认、4 张截图）与测试报告文档中更正。**实际执行换钥匙未授权测试**（不可逆）。
 - **飞书 Base 由用户整理**：Enclave 代码审查 6/7/8 三条已从 issue 表移除（Base 现 13 条）；issue 1 文档标注改为「已修复」。本地快照已同步。
+- **测试报告重新生成**：块级编辑不可靠（DELETE 404、单元格需内部 text block），按用户指示改为「md 为唯一事实源 + `regenerate-report-doc.mjs` 重新导入」。新文档
+  `https://catwallet.jp.larksuite.com/docx/IDFmdq4o4oLRQuxmhFgj1KVQpHe`（已核对内容=本地 md，13 条、issue 3 更正、issue 1 已修复）；旧文档 `SXCEdr07AoAgNEx58qKjhlTPpPe` 已删除。
 
 ---
 
@@ -83,6 +88,7 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 4. **陌生会话「帮我转 0.01 ETH 给小明」**：语音测试混乱期间自动产生，真人未确认发起，待核实（已记入语音 finding）。
 5. **语音「查余额」却自动进入兑换流程**（未点兑换，输入框自动出现内容）：仅出现一次、上下文被污染，用户已暂停语音专项，留作以后复现。
 6. **git 提交未推送**：首个 commit `7a8b2f5` 已建，本次纠错增量待提交；推送远端需用户确认。
+7. **issue 3 实际执行换钥匙**（待授权）：入口已证实，但执行属不可逆操作未实测；用户已同意验证，待本轮执行。
 
 ---
 
