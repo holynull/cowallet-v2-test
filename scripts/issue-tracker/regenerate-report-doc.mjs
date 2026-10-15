@@ -9,6 +9,7 @@
  * 用法：
  *   node scripts/issue-tracker/regenerate-report-doc.mjs          # 生成新文档，打印 document_id + URL
  *   node scripts/issue-tracker/regenerate-report-doc.mjs --title "自定义标题"
+ *   node scripts/issue-tracker/regenerate-report-doc.mjs --md docs/TEST-REPORT-2026-10-15.md --title "标题"
  */
 
 import fs from 'node:fs';
@@ -21,9 +22,10 @@ const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const argv = process.argv.slice(2);
 
 const API = 'https://open.larksuite.com';
-const MD_PATH = path.join(ROOT_DIR, 'docs', 'TEST-REPORT-2026-10-14.md');
+const mdIdx = argv.indexOf('--md');
+const MD_PATH = mdIdx >= 0 ? path.join(ROOT_DIR, argv[mdIdx + 1]) : path.join(ROOT_DIR, 'docs', 'TEST-REPORT-2026-10-14.md');
 const titleIdx = argv.indexOf('--title');
-const TITLE = titleIdx >= 0 ? argv[titleIdx + 1] : 'CoWallet v2 测试报告 1012-14（重新生成）';
+const TITLE = titleIdx >= 0 ? argv[titleIdx + 1] : 'CoWallet v2 测试报告（生成）';
 
 async function main() {
   const token = await getUserToken();
