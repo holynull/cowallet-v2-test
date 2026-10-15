@@ -20,7 +20,7 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 | --- | --- |
 | 设备 | iPhone 13 mini（iOS 26.6.1；Xcode 26.5），USB 连接 |
 | UDID | `00008110-000A6D3C3450401E`（`IOS_UDID`） |
-| 被测 App | `app.getcowallet.wallet` v1.0.2，**build 2610132055**（TestFlight 自动从 2610121802 更新，2026-10-14 会话内发生） |
+| 被测 App | `app.getcowallet.wallet` v1.0.2，**build 2610141608**（TestFlight 自动更新链：2610121802 → 2610132055〔2026-10-14〕→ **2610141608〔2026-10-15〕**） |
 | WDA | 长驻服务 `http://127.0.0.1:8100/status`，**复用**，不随意 stop/restart（`npm run wda:stop` 仅手动清理） |
 | 驱动 | Midscene（iOS 走 Appium + WebDriverAgent），视觉模型 **DeepSeek `deepseek-v4-1-flash-260910`**（`.env` 的 `MIDSCENE_MODEL_NAME`，已 git-ignore；比原 Doubao turbo 快一个量级，aiQuery/aiAct 均已真机验证）。**思考/防 429 已启用并真机实测**：`MIDSCENE_MODEL_REASONING_ENABLED=true` + `MIDSCENE_MODEL_REASONING_EFFORT=medium`（请求体实测 `{"thinking":{"type":"enabled"},"reasoning_effort":"medium"}`），`MIDSCENE_MODEL_RETRY_COUNT=8` + `RETRY_INTERVAL=8000` + `TIMEOUT=120000`（429 会自动重试，无指数退避）。注意 midscene 默认对 deepseek 关思考，只设 EFFORT 不设 ENABLED 不会生效；官方清单只列 `deepseek-v4-flash-vision-exp`，Ark 4.1 新版已开视觉，文档滞后于实测，以实测为准 |
 | 钱包地址 | EOA `0x7C0C85034Eb214EC6D5C8E5253BDC44f6A024821`（Ethereum 主网） |
@@ -55,7 +55,7 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 
 **本轮新增/更新**：
 - issue 16 全量归档（4 张截图 + 回归备注 + 状态=已验收）；issue 1 跨端补证（角标+通知中心对照）；T29 脚本修正了「把 TestFlight 更新通知误判为收款推送」的断言问题。
-- **issue 16 反转信号（2026-10-15 新增，待复测）**：App 已更新到**最新 TestFlight build**，用户截图显示收款页（前台）收到 `1 USDT（Ethereum）` 后出现**系统级推送横幅**「收到 1 USDT（Ethereum）/ 0xf779…c589 / 点一下看这笔」——旧 build（T29）同一场景无任何资金 PUSH。疑似新 build 已补「收款到账推送」。**待办**：① 设备解锁后读新 build 号（`CFBundleVersion`）；② 新 build 重跑 T29 式后台/锁屏复测；③ 通过则改飞书 issue 16 = 已修复。本地记录 `findings/FINDING-push-receive-newbuild.md` + 截图 `findings/assets/feishu-issue16-newbuild-push/`。
+- **issue 16 反转信号（2026-10-15，新 build 2610141608）**：App 更新到**最新 TestFlight build 2610141608**，用户截图显示收款页（前台）收到 `1 USDT（Ethereum）` 后出现**系统级推送横幅**「收到 1 USDT（Ethereum）/ 0xf779…c589 / 点一下看这笔」——旧 build 2610132055（T29）同一场景无任何资金 PUSH。疑似新 build 已补「收款到账推送」。**待办**：① ✅ build 号已读（2610141608，`xcrun devicectl`）；② 新 build 重跑 T29 式后台/锁屏复测；③ 通过则改飞书 issue 16 = 已修复。本地记录 `findings/FINDING-push-receive-newbuild.md` + 截图 `findings/assets/feishu-issue16-newbuild-push/`。
 - **issue 3 结论纠错**：用户发现设置 → 密钥安全 →「轮换密钥分片（上次轮换: 从未）」存在**独立轮换入口**，页面「换一套新钥匙」说明完整（三份换新/地址不变/新 24 词旧作废/Face ID 双确认/反诈提示），按钮「开始换钥匙」（执行边界）/「先不换」。此前「v2 无独立轮换入口」判断有误，已在飞书 Base（record `reczz28MNNXaNbKw`，状态=待确认、4 张截图）与测试报告文档中更正。
 - **issue 17 真实执行换钥匙失败（本轮新增）**：用户授权「真实验证一次换钥匙」并经「再试一次」完成第二次真实尝试——两次均通过恢复密码校验 + Face ID 确认后失败，服务端返回 `rotation_backup_proof_required`；失败屏仅「再试一次 / 关闭」，无原因说明、无替代路径；旧钥匙仍有效（未损坏）。根因推测：服务端 `has_backup_proof`（backup_shard_hash）门槛未满足，需产品/后端确认正常完成备份验证后是否应具备。已写入飞书 Base 序号 17（1 张失败屏截图）+ 本地 finding `FINDING-rotation-execution-failed.md`。
 - **飞书 Base 由用户整理**：Enclave 代码审查 6/7/8 三条已从 issue 表移除（Base 现 13 条）；issue 1 文档标注改为「已修复」。本地快照已同步。
@@ -100,7 +100,7 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 - **OTP 限流每小时 3 次**：多次登录要控制验证码发送频率。
 - **公共 RPC 瞬态返回 0**：余额用多个 RPC 取最大值（`eth_getBalance`）。
 - **TestFlight overlay**：App 左上角有浮动 TestFlight 按钮，可能被视觉模型误判为返回；「安全返回」用关键词白名单兜底。
-- **TestFlight 会自动更新 build**：测试期间可能中途变 build，影响对照（本轮 2610121802 → 2610132055）。
+- **TestFlight 会自动更新 build**：测试期间可能中途变 build，影响对照（2610121802 → 2610132055 → 2610141608）。
 - **执行边界**：绝不自动点确认/签名/转账/导出；Face ID 由真人手动；真实转账需当次授权 + 白名单地址 + 限额内。
 - **OCR**：`/tmp/ocrbin`（macOS Vision，zh-Hans+en）可离线识别截图；`screenshotBase64()` 带 `data:image/png;base64,` 前缀。
 

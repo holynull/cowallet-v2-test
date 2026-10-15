@@ -13,7 +13,7 @@ Scope: iOS wallet-ready 状态，AI 聊天兑换（swap）流程
 
 当前测试目标是 **TestFlight 分发的 iOS 真机包**，不是 git 分支：
 
-- 目标 App：`app.getcowallet.wallet`，版本 **1.0.2**，build **2610132055**（TestFlight）
+- 目标 App：`app.getcowallet.wallet`，版本 **1.0.2**，build **2610141608**（TestFlight，2026-10-15 更新；此前 2610132055）
 - 测试设备：iPhone 13 mini / iOS 26.6.1，UDID `00008110-000A6D3C3450401E`（脚本经 `IOS_UDID` pin 死）
 - 复测前必须记录：实际安装包的 App build、后端环境、本次执行的链上余额快照。
 - 该版本应已包含 swap 状态收敛、无报价终态、无路由 422、跨链 orderId/服务端轮询、报价持久化和失败分类等修复。因此旧项目 2026-08-13～14 的发现不能直接作为本版本结论，必须在目标包上定向回归。

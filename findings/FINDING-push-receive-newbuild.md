@@ -6,7 +6,7 @@ Feishu: QVGLbx4zIauLNxsxPZYjHvSbpUh/tblQSxhJi3fb4ml7 序号 16（关联；本轮
 Project: CoWallet v2
 Labels: RealDevice / Regression-Rebound / Needs-Reverify
 Priority: Medium
-Source: 用户提供的真机截图（App 已更新到最新 TestFlight build；build 号待设备解锁后确认，此前为 v1.0.2 build 2610132055）
+Source: 用户提供的真机截图 + `xcrun devicectl` 已确认（**app.getcowallet.wallet v1.0.2 build 2610141608**，2026-10-15 TestFlight 更新；旧 build 2610132055）
 Screenshots:
 - findings/assets/feishu-issue16-newbuild-push/receive-push-banner.jpg（09:38，推送横幅「收到 1 USDT（Ethereum）/ 0xf779…c589 / 点一下看这笔」叠加在 App 收款页之上）
 
@@ -32,7 +32,7 @@ issue 16（旧 build 2610132055）经 T29 实测：真实外部转入后，**后
 
 ### 复现/待确认（结论前置）
 
-1. 确认设备上新 build 号（当前设备锁屏，`xcrun devicectl` 显示 unavailable，待解锁读取 `CFBundleVersion`）。
+1. ✅ 新 build 号已确认：**2610141608**（`xcrun devicectl device info apps` 读取 `bundleVersion`）。
 2. 在新 build 上重跑一次 T29 式复测：外部地址真实小额转入 → **按 Home 后台化 + 锁屏** → 查锁屏/通知中心是否有「收到」类推送（区别于 TestFlight 更新通知）。
 3. 通过 → 更新飞书 issue 16 为「已修复 / 待反馈」；不通过（仅前台横幅）→ 记录为部分修复并补证据。
 
