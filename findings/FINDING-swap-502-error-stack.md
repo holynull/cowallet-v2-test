@@ -9,6 +9,7 @@ Priority: Medium
 Source: 用户提供真机截图（app.getcowallet.wallet v1.0.2 build 2610141608；2026-10-15 13:31）
 Screenshots:
 - findings/assets/feishu-issue18-swap-502/op-swap-10usdt-502.png（对话：Op 上 10USDT 换 ETH → 4 段错误文案；同屏 arb 0.0045ETH 换 USDT 正常）
+- findings/assets/feishu-issue18-swap-502/base-eth-usdt-502.png（14:23 同会话：Base 0.002ETH 换 USDT → 同样 4 段堆叠含 502）
 
 ### 观察到
 
@@ -25,6 +26,8 @@ AI 聊天输入「**Op 上 10USDT 换 ETH**」后，助手一次性返回 4 段�
 
 同屏对照组「arb 上的 0.0045ETH 换 USDT」：正常「已提议，请看屏幕上的确认卡片」→ 确认卡 →「兑换计划 / 已发出，等链上确认」。→ 非全链路故障，属失败态文案/UX 问题。
 
+**第 2 例（2026-10-15 14:23，同 build）**：同一会话输入「**Base 上的 0.002ETH 换 USDT**」→ 返回同样 4 段堆叠（含「服务器错误，状态码：502」）→ **502 并非 OP 独占，Base 链 ETH→USDT 同样触发**。结合同屏「Base 0.002ETH 换 USDC」报的是「请求参数错误」（见 issue 20 第 3 例）→ 后端按「买入资产路由」返回不同错误分类（USDT 买入→502、USDC 买入→参数错误），疑为后端各聚合器/路由的错误映射不一致。
+
 ### 期望
 
 - 兑换失败只给**一条**可理解的失败文案，区分「余额不足 / 无可用路线 / 服务暂不可用（请稍后重试）」；
@@ -40,8 +43,10 @@ AI 聊天输入「**Op 上 10USDT 换 ETH**」后，助手一次性返回 4 段�
 1. wallet-ready，App build 2610141608。
 2. AI 聊天输入「Op 上 10USDT 换 ETH」。
 3. 观察助手回复：4 段堆叠文案，含「服务器错误，状态码：502」。
+4. （第 2 例）同会话输入「Base 上的 0.002ETH 换 USDT」→ 同样堆叠含 502。
 
 ### 备注
 
 - 与兑换覆盖指南失败态用例（F-3/F-5/F-7）期望一致：失败文案应可理解、失败应有出口。
+- 已扩展为多链复现：OP（10USDT→ETH）与 Base（0.002ETH→USDT）均触发 502；与 issue 20 的「请求参数错误」按买入资产路由分流。
 - 已写入飞书 Base issue 18（待反馈/待确认）。

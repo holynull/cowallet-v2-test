@@ -4,7 +4,7 @@
 > 本文件是测试战役的「当前状态基线」：环境、进度、结论、待办都在这里汇总。
 > 每次会话结束，更新本文件并重跑快照，让下一个会话能无缝接续。
 
-最后更新：2026-10-14 20:05（Asia/Shanghai）
+最后更新：2026-10-15 14:25（Asia/Shanghai）
 仓库：`/Users/zhangleping/github.com/holynull/cowallet-v2-test`（`main` 已 push 至 `e048807`：基线 `7a8b2f5` → issue3 纠错 `ef8cd15` → 报告重新生成+对齐 `e048807`；App 源码在兄弟仓库 `../cowallet`）
 Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4ml7`
 本地快照：`docs/issue-tracker/issue-status.md`（`node scripts/issue-tracker/snapshot-issues.mjs` 刷新）
@@ -51,13 +51,13 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 | --- | --- |
 | ✅ 已验收 | 1（站内收款通知存在，Base 标注已修复）、2（iCloud 第三片）、4（分片表述）、16（**无收款 PUSH**，T29 证实） |
 | 🟡 部分通过 | 5（真实转账全链路成功，但曾遇 RPC 瞬态失败） |
-| ⏳ 待确认/待产品决策 | 3（**入口存在：设置→密钥安全→「换一套新钥匙」；真实执行失败见 17**）、9–13（低/中优先，本地 finding 已归档）、14（确认卡地址，T26 已复测）、15（AI 安全保护 not_applicable）、**17（真实执行换钥匙失败 `rotation_backup_proof_required`，失败屏无原因/替代路径）**、**18（OP 兑换失败文案堆叠+暴露 502，无重试/替代引导）**、**19（ARB 10 USDT→ETH 源链上链后误报「已换成 ETH」，实际 refunded 退款，需追问才暴露）**、**20（「0.007bnb 换 USDT」失败堆叠文案含「请求参数错误」，无重试/替代引导）**、**21（新对话单条兑换请求双卡并存：旧卡被自动取代不清理）** |
+| ⏳ 待确认/待产品决策 | 3（**入口存在：设置→密钥安全→「换一套新钥匙」；真实执行失败见 17**）、9–13（低/中优先，本地 finding 已归档）、14（确认卡地址，T26 已复测）、15（AI 安全保护 not_applicable）、**17（真实执行换钥匙失败 `rotation_backup_proof_required`，失败屏无原因/替代路径）**、**18（兑换失败堆叠+暴露 502：OP 10USDT→ETH / Base 0.002ETH→USDT 两链复现，无重试/替代引导）**、**19（ARB 10 USDT→ETH 源链上链后误报「已换成 ETH」，实际 refunded 退款，需追问才暴露）**、**20（兑换失败堆叠含「请求参数错误」：BSC BNB↔USDT 双向 + Base 0.002ETH→USDC 均触发，非 BSC 专属）**、**21（新对话单条兑换请求双卡并存：旧卡被自动取代不清理）** |
 
 **本轮新增/更新**：
 - **issue 21（2026-10-15）**：新对话只发一条「Base 上的全部 USDC 换成 ETH」、未点任何按钮，即出现两张并存计划卡（旧 `c299acdf` 已过期 + 新 `a80e920f` 生效）；旧卡不清理、会话历史确认新对话（3 会话并存）。与 issue 19 同源（计划被取代/过期），本单重点是「未点按钮自动冒第二张卡 + 旧卡不清理」。已写入飞书 Base issue 21（中/待反馈/待确认，4 张截图）+ 本地 finding `FINDING-dual-plan-cards-auto.md`。
-- **issue 20（2026-10-15，2 例证据）**：「0.007bnb 换 USDT」（BNB→USDT，未指明链）与「bsc 上全部 USDT 换 bnb」（USDT→BNB，明确指定链+全部金额）**双向均失败**，堆叠返回「无法生成计划 / 没法生成这个计划 / 请求参数错误 / 暂时没有可用的兑换路线」→ 可排除「小写/未指明链/金额过小」假设，疑似 **BSC 上 BNB↔USDT 路径参数校验/静态 symbol 映射问题**（如对「bnb」小写不识别）。与 issue 18 同属失败态文案堆叠家族。已写入飞书 Base issue 20（中/待反馈/待确认，2 张截图）+ 本地 finding `FINDING-bnb-swap-param-error-stack.md`。
+- **issue 20（2026-10-15，3 例证据）**：「0.007bnb 换 USDT」（BNB→USDT，未指明链）、「bsc 上全部 USDT 换 bnb」（USDT→BNB，明确指定链+全部金额）与「Base 上的 0.002ETH 换 USDC」（**Base 链，与 BSC 无关**）**三条均失败**，堆叠返回「无法生成计划 / 没法生成这个计划 / 请求参数错误 / 暂时没有可用的兑换路线」→ 可排除「小写/未指明链/金额过小/BSC 专属」假设；**错误不局限于 BSC**，且与 502（issue 18 第 2 例）按「买入资产路由」分流（USDC 买入→参数错误、USDT 买入→502），疑似后端各聚合器/路由错误映射不一致。已写入飞书 Base issue 20（中/待反馈/待确认，3 张截图）+ 本地 finding `FINDING-bnb-swap-param-error-stack.md`。
 - **issue 19（2026-10-15）**：ARB 10 USDT→ETH 真实兑换——AI 先报「兑换已执行/已换成 ETH（tx 0x7765cac5…）」，用户追问「兑换成功了吗」后查订单（kgr4eknk..rqru5t0）得知实为 **refunded（refund_complete）**，10 USDT 已原路退回；失败诱因疑似**滑点 0.5% 偏低**（默认 1% 成功率更高，用户经验）。核心=**结果终态误报 + 失败退款不主动通知**。已写入飞书 Base issue 19（中/待反馈/待确认，1 张截图）+ 本地 finding `FINDING-arb-swap-false-success-refund.md`。
-- **issue 18（2026-10-15）**：OP 上 10 USDT 换 ETH 失败，助手堆叠返回「无法生成计划 / 没法生成这个计划 / 服务器错误，状态码：502 / 暂时没有可用的兑换路线」4 段文案，直接暴露后端 502、无重试/替代引导；同屏 arb 0.0045ETH→USDT 正常。已写入飞书 Base issue 18（中/待反馈/待确认，1 张截图）+ 本地 finding `FINDING-swap-502-error-stack.md`。
+- **issue 18（2026-10-15，2 例证据）**：OP 上 10 USDT 换 ETH 失败，助手堆叠返回「无法生成计划 / 没法生成这个计划 / 服务器错误，状态码：502 / 暂时没有可用的兑换路线」4 段文案，直接暴露后端 502、无重试/替代引导；同屏 arb 0.0045ETH→USDT 正常。**第 2 例（14:23 同会话）**：「Base 上的 0.002ETH 换 USDT」→ 同样 4 段堆叠含 502 → **502 非 OP 独占**；结合同屏「Base 0.002ETH 换 USDC」报「请求参数错误」（issue 20 第 3 例）→ 后端按买入资产路由分流错误分类，需后端定位。已写入飞书 Base issue 18（中/待反馈/待确认，2 张截图）+ 本地 finding `FINDING-swap-502-error-stack.md`。
 - **六链转账覆盖全通过（2026-10-15，新 build 2610141608）**：用户真机手动测试 **6 条支持链（Ethereum / Base / Arbitrum / Optimism / BSC / Polygon）** 的转账（transfer）全链路，**均未发现问题**。无对应 issue；如需留证可后续补截图，暂记基线。
 - issue 16 全量归档（4 张截图 + 回归备注 + 状态=已验收）；issue 1 跨端补证（角标+通知中心对照）；T29 脚本修正了「把 TestFlight 更新通知误判为收款推送」的断言问题。
 - **issue 16 反转信号（2026-10-15，新 build 2610141608）**：App 更新到**最新 TestFlight build 2610141608**，用户截图显示收款页（前台）收到 `1 USDT（Ethereum）` 后出现**系统级推送横幅**「收到 1 USDT（Ethereum）/ 0xf779…c589 / 点一下看这笔」——旧 build 2610132055（T29）同一场景无任何资金 PUSH。疑似新 build 已补「收款到账推送」。**待办**：① ✅ build 号已读（2610141608，`xcrun devicectl`）；② 新 build 重跑 T29 式后台/锁屏复测；③ 通过则改飞书 issue 16 = 已修复。本地记录 `findings/FINDING-push-receive-newbuild.md` + 截图 `findings/assets/feishu-issue16-newbuild-push/`。
