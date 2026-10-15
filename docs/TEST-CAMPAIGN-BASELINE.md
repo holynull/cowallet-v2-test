@@ -47,13 +47,14 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 
 ## 3. Issue 状态汇总（截至 2026-10-14，详见 `docs/issue-tracker/issue-status.md`）
 
-| 状态 | Issue（Base 当前 17 条） |
+| 状态 | Issue（Base 当前 18 条） |
 | --- | --- |
 | ✅ 已验收 | 1（站内收款通知存在，Base 标注已修复）、2（iCloud 第三片）、4（分片表述）、16（**无收款 PUSH**，T29 证实） |
 | 🟡 部分通过 | 5（真实转账全链路成功，但曾遇 RPC 瞬态失败） |
-| ⏳ 待确认/待产品决策 | 3（**入口存在：设置→密钥安全→「换一套新钥匙」；真实执行失败见 17**）、9–13（低/中优先，本地 finding 已归档）、14（确认卡地址，T26 已复测）、15（AI 安全保护 not_applicable）、**17（真实执行换钥匙失败 `rotation_backup_proof_required`，失败屏无原因/替代路径）**、**18（OP 兑换失败文案堆叠+暴露 502，无重试/替代引导）**、**19（ARB 10 USDT→ETH 源链上链后误报「已换成 ETH」，实际 refunded 退款，需追问才暴露）**、**20（「0.007bnb 换 USDT」失败堆叠文案含「请求参数错误」，无重试/替代引导）** |
+| ⏳ 待确认/待产品决策 | 3（**入口存在：设置→密钥安全→「换一套新钥匙」；真实执行失败见 17**）、9–13（低/中优先，本地 finding 已归档）、14（确认卡地址，T26 已复测）、15（AI 安全保护 not_applicable）、**17（真实执行换钥匙失败 `rotation_backup_proof_required`，失败屏无原因/替代路径）**、**18（OP 兑换失败文案堆叠+暴露 502，无重试/替代引导）**、**19（ARB 10 USDT→ETH 源链上链后误报「已换成 ETH」，实际 refunded 退款，需追问才暴露）**、**20（「0.007bnb 换 USDT」失败堆叠文案含「请求参数错误」，无重试/替代引导）**、**21（新对话单条兑换请求双卡并存：旧卡被自动取代不清理）** |
 
 **本轮新增/更新**：
+- **issue 21（2026-10-15）**：新对话只发一条「Base 上的全部 USDC 换成 ETH」、未点任何按钮，即出现两张并存计划卡（旧 `c299acdf` 已过期 + 新 `a80e920f` 生效）；旧卡不清理、会话历史确认新对话（3 会话并存）。与 issue 19 同源（计划被取代/过期），本单重点是「未点按钮自动冒第二张卡 + 旧卡不清理」。已写入飞书 Base issue 21（中/待反馈/待确认，4 张截图）+ 本地 finding `FINDING-dual-plan-cards-auto.md`。
 - **issue 20（2026-10-15，2 例证据）**：「0.007bnb 换 USDT」（BNB→USDT，未指明链）与「bsc 上全部 USDT 换 bnb」（USDT→BNB，明确指定链+全部金额）**双向均失败**，堆叠返回「无法生成计划 / 没法生成这个计划 / 请求参数错误 / 暂时没有可用的兑换路线」→ 可排除「小写/未指明链/金额过小」假设，疑似 **BSC 上 BNB↔USDT 路径参数校验/静态 symbol 映射问题**（如对「bnb」小写不识别）。与 issue 18 同属失败态文案堆叠家族。已写入飞书 Base issue 20（中/待反馈/待确认，2 张截图）+ 本地 finding `FINDING-bnb-swap-param-error-stack.md`。
 - **issue 19（2026-10-15）**：ARB 10 USDT→ETH 真实兑换——AI 先报「兑换已执行/已换成 ETH（tx 0x7765cac5…）」，用户追问「兑换成功了吗」后查订单（kgr4eknk..rqru5t0）得知实为 **refunded（refund_complete）**，10 USDT 已原路退回；失败诱因疑似**滑点 0.5% 偏低**（默认 1% 成功率更高，用户经验）。核心=**结果终态误报 + 失败退款不主动通知**。已写入飞书 Base issue 19（中/待反馈/待确认，1 张截图）+ 本地 finding `FINDING-arb-swap-false-success-refund.md`。
 - **issue 18（2026-10-15）**：OP 上 10 USDT 换 ETH 失败，助手堆叠返回「无法生成计划 / 没法生成这个计划 / 服务器错误，状态码：502 / 暂时没有可用的兑换路线」4 段文案，直接暴露后端 502、无重试/替代引导；同屏 arb 0.0045ETH→USDT 正常。已写入飞书 Base issue 18（中/待反馈/待确认，1 张截图）+ 本地 finding `FINDING-swap-502-error-stack.md`。

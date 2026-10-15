@@ -1,10 +1,10 @@
 # CoWallet v2 Issue 状态快照（本地只读）
 
-> 生成时间：2026/10/15 14:01:33（Asia/Shanghai）
+> 生成时间：2026/10/15 14:19:25（Asia/Shanghai）
 > 唯一事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / `tblQSxhJi3fb4ml7`（https://catwallet.jp.larksuite.com/base/QVGLbx4zIauLNxsxPZYjHvSbpUh）
 > 本文件仅作跨会话快速查阅；刷新：`node scripts/issue-tracker/snapshot-issues.mjs`
 
-共 17 条记录。
+共 18 条记录。
 
 | 序号 | Issue | 严重程度 | 文档标注 | 回归验证状态 | 反馈状态 | 截图 | 回归备注（截断） |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -25,5 +25,6 @@
 | 18 | OP 上 10 USDT 换 ETH 兑换失败：错误文案堆叠且直接暴露「服务器错误，状态码：502」，无统一失败态与重试/替代引导 | 中 | 未标注 | 待确认 | 待反馈 | 1 | — |
 | 19 | ARB 10 USDT→ETH 兑换源链上链后 AI 误报「已换成 ETH」，实际订单 refunded 退款，需用户追问才暴露 | 中 | 未标注 | 待确认 | 待反馈 | 1 | — |
 | 20 | 「0.007bnb 换 USDT」兑换失败：堆叠文案含「请求参数错误」，无明确原因与重试/替代引导 | 中 | 未标注 | 待确认 | 待反馈 | 2 | — |
+| 21 | 新对话单条兑换请求出现两张并存「兑换计划」卡：旧卡自动被新卡取代但不清理，未点任何按钮即冒第二张卡 | 中 | 未标注 | 待确认 | 待反馈 | 4 | — |
 
 > 详细回归备注/全部截图请到飞书表查看。record_id 映射见脚本输出（未落盘）。
