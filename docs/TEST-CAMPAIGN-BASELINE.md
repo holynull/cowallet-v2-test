@@ -47,13 +47,14 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 
 ## 3. Issue 状态汇总（截至 2026-10-14，详见 `docs/issue-tracker/issue-status.md`）
 
-| 状态 | Issue（Base 当前 15 条） |
+| 状态 | Issue（Base 当前 16 条） |
 | --- | --- |
 | ✅ 已验收 | 1（站内收款通知存在，Base 标注已修复）、2（iCloud 第三片）、4（分片表述）、16（**无收款 PUSH**，T29 证实） |
 | 🟡 部分通过 | 5（真实转账全链路成功，但曾遇 RPC 瞬态失败） |
-| ⏳ 待确认/待产品决策 | 3（**入口存在：设置→密钥安全→「换一套新钥匙」；真实执行失败见 17**）、9–13（低/中优先，本地 finding 已归档）、14（确认卡地址，T26 已复测）、15（AI 安全保护 not_applicable）、**17（真实执行换钥匙失败 `rotation_backup_proof_required`，失败屏无原因/替代路径）**、**18（OP 兑换失败文案堆叠+暴露 502，无重试/替代引导）** |
+| ⏳ 待确认/待产品决策 | 3（**入口存在：设置→密钥安全→「换一套新钥匙」；真实执行失败见 17**）、9–13（低/中优先，本地 finding 已归档）、14（确认卡地址，T26 已复测）、15（AI 安全保护 not_applicable）、**17（真实执行换钥匙失败 `rotation_backup_proof_required`，失败屏无原因/替代路径）**、**18（OP 兑换失败文案堆叠+暴露 502，无重试/替代引导）**、**19（ARB 10 USDT→ETH 源链上链后误报「已换成 ETH」，实际 refunded 退款，需追问才暴露）** |
 
 **本轮新增/更新**：
+- **issue 19（2026-10-15）**：ARB 10 USDT→ETH 真实兑换——AI 先报「兑换已执行/已换成 ETH（tx 0x7765cac5…）」，用户追问「兑换成功了吗」后查订单（kgr4eknk..rqru5t0）得知实为 **refunded（refund_complete）**，10 USDT 已原路退回；失败诱因疑似**滑点 0.5% 偏低**（默认 1% 成功率更高，用户经验）。核心=**结果终态误报 + 失败退款不主动通知**。已写入飞书 Base issue 19（中/待反馈/待确认，1 张截图）+ 本地 finding `FINDING-arb-swap-false-success-refund.md`。
 - **issue 18（2026-10-15）**：OP 上 10 USDT 换 ETH 失败，助手堆叠返回「无法生成计划 / 没法生成这个计划 / 服务器错误，状态码：502 / 暂时没有可用的兑换路线」4 段文案，直接暴露后端 502、无重试/替代引导；同屏 arb 0.0045ETH→USDT 正常。已写入飞书 Base issue 18（中/待反馈/待确认，1 张截图）+ 本地 finding `FINDING-swap-502-error-stack.md`。
 - **六链转账覆盖全通过（2026-10-15，新 build 2610141608）**：用户真机手动测试 **6 条支持链（Ethereum / Base / Arbitrum / Optimism / BSC / Polygon）** 的转账（transfer）全链路，**均未发现问题**。无对应 issue；如需留证可后续补截图，暂记基线。
 - issue 16 全量归档（4 张截图 + 回归备注 + 状态=已验收）；issue 1 跨端补证（角标+通知中心对照）；T29 脚本修正了「把 TestFlight 更新通知误判为收款推送」的断言问题。
