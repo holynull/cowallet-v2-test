@@ -1,10 +1,10 @@
 # CoWallet v2 Issue 状态快照（本地只读）
 
-> 生成时间：2026/10/14 19:54:04（Asia/Shanghai）
+> 生成时间：2026/10/15 13:39:54（Asia/Shanghai）
 > 唯一事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / `tblQSxhJi3fb4ml7`（https://catwallet.jp.larksuite.com/base/QVGLbx4zIauLNxsxPZYjHvSbpUh）
 > 本文件仅作跨会话快速查阅；刷新：`node scripts/issue-tracker/snapshot-issues.mjs`
 
-共 14 条记录。
+共 15 条记录。
 
 | 序号 | Issue | 严重程度 | 文档标注 | 回归验证状态 | 反馈状态 | 截图 | 回归备注（截断） |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -22,5 +22,6 @@
 | 15 | AI 提供「旧手机被人碰过，想保护这台手机/让旧钥匙作废」选项，选择后返回「无法生成计划（not_applicable）」且无原因与替代路径 | 中 | 未标注 | 待确认 | 待反馈 | 4 | 【2026-10-14 T25 只读深挖】复现并补充 issue 15：1) 失败点 UX 缺口复现：同一意图两次措辞分别返回原始内部动作码错误——「secure_this_phone does not apply to this wallet right now · 详情: not_applicable」和「restore_wallet does not … |
 | 16 | 收款到账无 PUSH/锁屏推送提示，仅有站内铃铛通知（首页角标 + 通知中心） | 中 | — | 已验收 | 待反馈 | 5 | 【2026-10-14 T29 锁屏/后台 PUSH 复测（真实外部转入 +0.0005 ETH，Ethereum 主网）】外部地址 0xeaad…5137 向钱包 0x7C0C85034Eb214EC6D5C8E5253BDC44f6A024821 转入 0.0005 ETH，链上余额 0.0034777 → 0.0039777 ETH（多 RPC 确认）… |
 | 17 | 真实执行密钥轮换失败（rotation_backup_proof_required），失败屏无原因说明与替代路径，旧钥匙仍有效 | 高 | 未标注 | 待确认 | 待反馈 | 1 | — |
+| 18 | OP 上 10 USDT 换 ETH 兑换失败：错误文案堆叠且直接暴露「服务器错误，状态码：502」，无统一失败态与重试/替代引导 | 中 | 未标注 | 待确认 | 待反馈 | 1 | — |
 
 > 详细回归备注/全部截图请到飞书表查看。record_id 映射见脚本输出（未落盘）。
