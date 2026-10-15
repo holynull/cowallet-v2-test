@@ -54,6 +54,7 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 | ⏳ 待确认/待产品决策 | 3（**入口存在：设置→密钥安全→「换一套新钥匙」；真实执行失败见 17**）、9–13（低/中优先，本地 finding 已归档）、14（确认卡地址，T26 已复测）、15（AI 安全保护 not_applicable）、**17（真实执行换钥匙失败 `rotation_backup_proof_required`，失败屏无原因/替代路径）** |
 
 **本轮新增/更新**：
+- **六链转账覆盖全通过（2026-10-15，新 build 2610141608）**：用户真机手动测试 **6 条支持链（Ethereum / Base / Arbitrum / Optimism / BSC / Polygon）** 的转账（transfer）全链路，**均未发现问题**。无对应 issue；如需留证可后续补截图，暂记基线。
 - issue 16 全量归档（4 张截图 + 回归备注 + 状态=已验收）；issue 1 跨端补证（角标+通知中心对照）；T29 脚本修正了「把 TestFlight 更新通知误判为收款推送」的断言问题。
 - **issue 16 反转信号（2026-10-15，新 build 2610141608）**：App 更新到**最新 TestFlight build 2610141608**，用户截图显示收款页（前台）收到 `1 USDT（Ethereum）` 后出现**系统级推送横幅**「收到 1 USDT（Ethereum）/ 0xf779…c589 / 点一下看这笔」——旧 build 2610132055（T29）同一场景无任何资金 PUSH。疑似新 build 已补「收款到账推送」。**待办**：① ✅ build 号已读（2610141608，`xcrun devicectl`）；② 新 build 重跑 T29 式后台/锁屏复测；③ 通过则改飞书 issue 16 = 已修复。本地记录 `findings/FINDING-push-receive-newbuild.md` + 截图 `findings/assets/feishu-issue16-newbuild-push/`。
 - **issue 3 结论纠错**：用户发现设置 → 密钥安全 →「轮换密钥分片（上次轮换: 从未）」存在**独立轮换入口**，页面「换一套新钥匙」说明完整（三份换新/地址不变/新 24 词旧作废/Face ID 双确认/反诈提示），按钮「开始换钥匙」（执行边界）/「先不换」。此前「v2 无独立轮换入口」判断有误，已在飞书 Base（record `reczz28MNNXaNbKw`，状态=待确认、4 张截图）与测试报告文档中更正。
