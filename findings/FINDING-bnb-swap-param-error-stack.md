@@ -8,7 +8,8 @@ Labels: RealDevice / UX-Gap / Error-Handling / Swap
 Priority: Medium
 Source: 用户提供真机截图（app.getcowallet.wallet v1.0.2 build 2610141608；2026-10-15 13:49）
 Screenshots:
-- findings/assets/feishu-issue20-bnb-param-error/bnb-007-swap-param-error.png（对话：0.007bnb 换 USDT → 4 段堆叠错误；同屏 ARB 第二次兑换 AI 主动提议查终态）
+- findings/assets/feishu-issue20-bnb-param-error/bnb-007-swap-param-error.png（13:49 对话：0.007bnb 换 USDT → 4 段堆叠错误；同屏 ARB 第二次兑换 AI 主动提议查终态）
+- findings/assets/feishu-issue20-bnb-param-error/bsc-all-usdt-to-bnb-param-error.png（13:58 当前屏幕实拍：bsc 上全部 USDT 换 bnb → 同样 4 段堆叠错误，含「请求参数错误」）
 
 ### 观察到
 
@@ -41,6 +42,9 @@ AI 聊天输入「**0.007bnb 换 USDT**」（BNB→USDT，未指明链，默认 
 2. AI 聊天输入「0.007bnb 换 USDT」。
 3. 观察助手回复：4 段堆叠文案，含「请求参数错误」。
 
+**13:58 复现（第 2 例，方向相反）**：输入「bsc 上全部 USDT 换 bnb」（明确指定链 + 全部金额 + USDT→BNB）→ **同样**返回「请求参数错误」堆叠。
+
 ### 备注
 
-- 与 issue 18（OP 10USDT→ETH，暴露「服务器错误，状态码：502」）同属「失败态文案堆叠、无出口」UX 家族，但本单根因是「请求参数错误」，需后端定位是 BNB 小写/未指明链/金额过小（0.007）哪个环节。
+- 与 issue 18（OP 10USDT→ETH，暴露「服务器错误，状态码：502」）同属「失败态文案堆叠、无出口」UX 家族。
+- 两条独立触发（0.007bnb 换 USDT / bsc 上全部 USDT 换 bnb）均报「请求参数错误」→ 可排除「小写/未指明链/金额过小」假设，疑似 **BSC 上 BNB↔USDT 双向兑换路径的参数校验/静态 symbol 映射问题**（如对「bnb」小写不识别），需后端定位。
