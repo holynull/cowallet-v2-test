@@ -10,6 +10,8 @@
  *      「没换成，USDT 已经原路退回。订单状态是 refunded（refund_complete）—源链那笔交易提交了，
  *      但兑换没完成，10 USDT 退回了你的 Arbitrum 钱包。」
  * 失败诱因（用户经验）：滑点设 0.5% 偏低，订单兑换未完成被 Bridgers 退款；默认 1% 成功率更高。
+ * 第 2 例（2026-10-15 14:48 真机实拍 eth-all-usdt-to-eth-refund-conv.png）：Ethereum 主网 10.781667 USDT→ETH 真实执行后
+ *   同模式复现：AI 先报「兑换已完成/已上链」，用户追问「到账了吗」后才承认 refund_complete 退款 → 跨链（ARB+ETH）复现。
  *
  * 用法：
  *   node scripts/issue-tracker/attach-issue19-arb-refund.mjs        # dry-run
@@ -48,7 +50,13 @@ const ISSUE_NOTE =
   '违反「结果卡不能只因源链 tx confirmed 就显示最终兑换成功」的终态口径；' +
   '② 用户需主动追问才得知失败退款，无主动的失败/退款提示或终态回查通知。' +
   '失败诱因（用户经验）：滑点设为 0.5% 偏低，兑换未完成被 Bridgers 退款（refund_complete），默认 1% 成功率更高；' +
-  '需产品确认滑点默认值/可选项、以及失败退款是否应主动通知。';
+  '需产品确认滑点默认值/可选项、以及失败退款是否应主动通知。' +
+  '【2026-10-15 14:48 真机复现（同 build；Ethereum 主网，第 2 例，真实执行+Face ID 用户手动）】' +
+  '用户输入「以太坊上 全部 USDT 换成 ETH」并真实执行：计划 35bf6c06 执行（授权路由合约 0x498b..f9b2 / 兑换 0x018c3964...10ca88，已确认 34 个区块）；' +
+  'AI 先报「兑换已完成 — 卖出 10.781667 USDT，换成了 ETH，已完成。」与「已确认：Ethereum 上的 10.781667 USDT→ETH 已经上链。交易 0x018c3964⋯10ca88」；' +
+  '用户追问「到账了吗？」→ AI 改口「这笔没换成 — 订单状态是已退款（refund_complete），USDT 已经退回你的钱包，ETH 没到账。」。' +
+  '→ 与第 1 例（ARB）同模式：**源链 tx confirmed 即误报成功、失败退款需用户主动追问才暴露**，跨链复现（Arbitrum + Ethereum 主网），' +
+  '非 ARB 独有，属「结果终态口径 + 失败退款主动通知」的全局问题；失败诱因仍疑滑点 0.5% 偏低（Bridgers 退款）。';
 
 const IMPACT =
   '中。源链 tx 上链后即误报成功，用户可能误以为已持有 ETH；实际 USDT 已原路退回，但需用户主动追问订单状态才能发现失败退款。' +

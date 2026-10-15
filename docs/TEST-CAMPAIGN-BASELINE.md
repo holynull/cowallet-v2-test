@@ -4,7 +4,7 @@
 > 本文件是测试战役的「当前状态基线」：环境、进度、结论、待办都在这里汇总。
 > 每次会话结束，更新本文件并重跑快照，让下一个会话能无缝接续。
 
-最后更新：2026-10-15 14:40（Asia/Shanghai）
+最后更新：2026-10-15 14:55（Asia/Shanghai）
 仓库：`/Users/zhangleping/github.com/holynull/cowallet-v2-test`（`main` 已 push 至 `e048807`：基线 `7a8b2f5` → issue3 纠错 `ef8cd15` → 报告重新生成+对齐 `e048807`；App 源码在兄弟仓库 `../cowallet`）
 Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4ml7`
 本地快照：`docs/issue-tracker/issue-status.md`（`node scripts/issue-tracker/snapshot-issues.mjs` 刷新）
@@ -51,10 +51,12 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 | --- | --- |
 | ✅ 已验收 | 1（站内收款通知存在，Base 标注已修复）、2（iCloud 第三片）、4（分片表述）、16（**无收款 PUSH**，T29 证实） |
 | 🟡 部分通过 | 5（真实转账全链路成功，但曾遇 RPC 瞬态失败） |
-| ⏳ 待确认/待产品决策 | 3（**入口存在：设置→密钥安全→「换一套新钥匙」；真实执行失败见 17**）、9–13（低/中优先，本地 finding 已归档）、14（确认卡地址，T26 已复测）、15（AI 安全保护 not_applicable）、**17（真实执行换钥匙失败 `rotation_backup_proof_required`，失败屏无原因/替代路径）**、**18（兑换失败堆叠+暴露 502：OP 10USDT→ETH / Base 0.002ETH→USDT 两链复现，无重试/替代引导）**、**19（ARB 10 USDT→ETH 源链上链后误报「已换成 ETH」，实际 refunded 退款，需追问才暴露）**、**20（兑换失败堆叠含「请求参数错误」：BSC BNB↔USDT 双向 + Base 0.002ETH→USDC + Polygon 60pol→USDT 均触发，跨 BSC/Base/Polygon 三链，非链专属）**、**21（新对话单条兑换请求双卡并存：旧卡被自动取代不清理）** |
+| ⏳ 待确认/待产品决策 | 3（**入口存在：设置→密钥安全→「换一套新钥匙」；真实执行失败见 17**）、9–13（低/中优先，本地 finding 已归档）、14（确认卡地址，T26 已复测）、15（AI 安全保护 not_applicable）、**17（真实执行换钥匙失败 `rotation_backup_proof_required`，失败屏无原因/替代路径）**、**18（兑换失败堆叠+暴露 502：OP 10USDT→ETH / Base 0.002ETH→USDT 两链复现，无重试/替代引导）**、**19（兑换源链上链后误报「已换成 ETH」实际 refunded：ARB 10USDT→ETH / ETH 主网 10.78USDT→ETH 跨链复现，需追问才暴露）**、**20（兑换失败堆叠含「请求参数错误」：BSC BNB↔USDT 双向 + Base 0.002ETH→USDC + Polygon 60pol→USDT 均触发，跨 BSC/Base/Polygon 三链，非链专属）**、**21（计划卡被取代/过期不清理：Base 未点按钮冒双卡 + Ethereum 真实执行中旧卡同样不清理、执行中新卡误标「已过期」）** |
 
 **本轮新增/更新**：
 - **issue 21（2026-10-15）**：新对话只发一条「Base 上的全部 USDC 换成 ETH」、未点任何按钮，即出现两张并存计划卡（旧 `c299acdf` 已过期 + 新 `a80e920f` 生效）；旧卡不清理、会话历史确认新对话（3 会话并存）。与 issue 19 同源（计划被取代/过期），本单重点是「未点按钮自动冒第二张卡 + 旧卡不清理」。已写入飞书 Base issue 21（中/待反馈/待确认，4 张截图）+ 本地 finding `FINDING-dual-plan-cards-auto.md`。
+- **issue 19 第 2 例（2026-10-15 14:48，Ethereum 主网，真实执行）**：输入「以太坊上 全部 USDT 换成 ETH」并真实执行（Face ID 用户手动），计划 35bf6c06 执行并已确认 34 区块；AI 先报「兑换已完成 / 卖出 10.781667 USDT 换成了 ETH / 已上链」，用户追问「到账了吗？」后改口「这笔没换成 — 订单状态是已退款（refund_complete），USDT 已经退回你的钱包，ETH 没到账。」→ **与第 1 例（ARB）同模式，跨链复现（Arbitrum + Ethereum 主网）**：源链 tx confirmed 即误报成功、失败退款需主动追问才暴露，非 ARB 独有，属结果终态口径 + 主动通知全局问题。已追加飞书 Base issue 19（中/待反馈/待确认，2 张截图）+ 本地 finding `FINDING-arb-swap-false-success-refund.md`。
+- **issue 21 第 2 例（2026-10-15 14:48，Ethereum 主网，真实执行流程）**：真实执行兑换时旧计划卡 `d694159e` 被 `35bf6c06` 取代后同样不清理（标「已被计划 35bf6c06 取代 / 已过期」），且执行中的新计划卡 `35bf6c06` 自身也标「已过期」（实际已授权并上链）→ 计划状态标签与执行状态不一致。已追加飞书 Base issue 21（中/待反馈/待确认，5 张截图）+ 本地 finding `FINDING-dual-plan-cards-auto.md`。
 - **issue 20（2026-10-15，4 例证据 / 跨 3 链）**：「0.007bnb 换 USDT」（BSC）、「bsc 上全部 USDT 换 bnb」（BSC，方向相反）、「Base 上的 0.002ETH 换 USDC」（Base）与「Polygon 上60pol换 USDT」（Polygon，两次）**全部失败**，堆叠返回「无法生成计划 / 没法生成这个计划 / 请求参数错误 / 暂时没有可用的兑换路线」→ 可排除「小写/未指明链/金额过小/链专属」假设；**跨 BSC/Base/Polygon 三链**。与 issue 18 对比（同为「买入 USDT」，Base ETH→USDT 报 **502**、Polygon POL→USDT 报**参数错误**）→ 错误分类疑按「链×路由（聚合器）」分流，疑似后端各聚合器/路由错误映射不一致，需后端按链定位。已写入飞书 Base issue 20（中/待反馈/待确认，4 张截图）+ 本地 finding `FINDING-bnb-swap-param-error-stack.md`。
 - **issue 19（2026-10-15）**：ARB 10 USDT→ETH 真实兑换——AI 先报「兑换已执行/已换成 ETH（tx 0x7765cac5…）」，用户追问「兑换成功了吗」后查订单（kgr4eknk..rqru5t0）得知实为 **refunded（refund_complete）**，10 USDT 已原路退回；失败诱因疑似**滑点 0.5% 偏低**（默认 1% 成功率更高，用户经验）。核心=**结果终态误报 + 失败退款不主动通知**。已写入飞书 Base issue 19（中/待反馈/待确认，1 张截图）+ 本地 finding `FINDING-arb-swap-false-success-refund.md`。
 - **issue 18（2026-10-15，2 例证据）**：OP 上 10 USDT 换 ETH 失败，助手堆叠返回「无法生成计划 / 没法生成这个计划 / 服务器错误，状态码：502 / 暂时没有可用的兑换路线」4 段文案，直接暴露后端 502、无重试/替代引导；同屏 arb 0.0045ETH→USDT 正常。**第 2 例（14:23 同会话）**：「Base 上的 0.002ETH 换 USDT」→ 同样 4 段堆叠含 502 → **502 非 OP 独占**；结合同屏「Base 0.002ETH 换 USDC」报「请求参数错误」（issue 20 第 3 例）→ 后端按买入资产路由分流错误分类，需后端定位。已写入飞书 Base issue 18（中/待反馈/待确认，2 张截图）+ 本地 finding `FINDING-swap-502-error-stack.md`。

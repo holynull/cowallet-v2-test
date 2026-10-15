@@ -12,6 +12,7 @@ Screenshots:
 - findings/assets/feishu-issue21-dual-plan-cards/both-cards-transition.png（两张卡交接：旧卡过期 + 新卡「已更新：计划内容变了」）
 - findings/assets/feishu-issue21-dual-plan-cards/current-active-card.png（新卡 a80e920f 当前生效，倒计时 + 取消/Face ID 批准）
 - findings/assets/feishu-issue21-dual-plan-cards/history-3-sessions.png（会话历史 3 个会话，含新对话「Base 上的全部 USDC 换成 ETH」）
+- findings/assets/feishu-issue21-dual-plan-cards/eth-plan-replaced-d694159e.png（Ethereum 主网真实执行：旧计划卡 d694159e 被 35bf6c06 取代后不清理，且执行中新卡自身也标「已过期」）
 
 ### 观察到
 
@@ -21,6 +22,8 @@ Screenshots:
 - **新卡 `a80e920f`**：当前生效（倒计时、签名额度、取消 / 用 Face ID 批准）。
 
 会话历史确认：该新对话（标题「Base 上的全部 USDC 换成 ETH」，3 分钟前）与旧会话（op 上 10USDT 换 ETH）及幽灵会话（帮我转 0.01 ETH 给小明）并存，共 3 个会话。
+
+**第 2 例（2026-10-15 14:48，Ethereum 主网，真实执行流程）**：真实执行「以太坊上 全部 USDT 换成 ETH」时，对话内旧计划卡 `d694159e` 标注「已被计划 `35bf6c06` 取代 / 已过期」，与新计划卡 `35bf6c06`（已发出/执行中）并存且不清理；且**执行中的新计划卡 `35bf6c06` 自身也标注「已过期」**（实际已授权路由合约并已上链）→ 计划状态标签与执行状态不一致。与第 1 例同源：计划被取代/过期时旧卡不清理；本单补充「真实执行流程中旧卡同样不清理 + 执行中卡片状态标签错误」场景。
 
 ### 期望
 
@@ -36,7 +39,9 @@ Screenshots:
 1. wallet-ready，App build 2610141608，新开一个对话。
 2. 输入并发送「Base 上的全部 USDC 换成 ETH」（只发一次，不点任何按钮）。
 3. 观察：对话内出现两张计划卡（旧 c299acdf 已过期 / 新 a80e920f 生效）。
+4. （第 2 例）Ethereum 主网真实执行兑换时，观察旧计划卡 d694159e「已被计划 35bf6c06 取代 / 已过期」不清理，且执行中新卡也标「已过期」。
 
 ### 备注
 
 - 与 issue 19 观察到的「计划被取代/过期」同源；本单重点是「未点按钮自动冒第二张卡 + 旧卡不清理」。
+- 第 2 例（Ethereum 真实执行）进一步确认「计划被取代/过期时旧卡不清理」在真实执行流程同样存在，并新增「执行中卡片状态标签错误（已执行却标已过期）」问题点。
