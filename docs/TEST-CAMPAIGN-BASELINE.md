@@ -55,6 +55,7 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 
 **本轮新增/更新**：
 - issue 16 全量归档（4 张截图 + 回归备注 + 状态=已验收）；issue 1 跨端补证（角标+通知中心对照）；T29 脚本修正了「把 TestFlight 更新通知误判为收款推送」的断言问题。
+- **issue 16 反转信号（2026-10-15 新增，待复测）**：App 已更新到**最新 TestFlight build**，用户截图显示收款页（前台）收到 `1 USDT（Ethereum）` 后出现**系统级推送横幅**「收到 1 USDT（Ethereum）/ 0xf779…c589 / 点一下看这笔」——旧 build（T29）同一场景无任何资金 PUSH。疑似新 build 已补「收款到账推送」。**待办**：① 设备解锁后读新 build 号（`CFBundleVersion`）；② 新 build 重跑 T29 式后台/锁屏复测；③ 通过则改飞书 issue 16 = 已修复。本地记录 `findings/FINDING-push-receive-newbuild.md` + 截图 `findings/assets/feishu-issue16-newbuild-push/`。
 - **issue 3 结论纠错**：用户发现设置 → 密钥安全 →「轮换密钥分片（上次轮换: 从未）」存在**独立轮换入口**，页面「换一套新钥匙」说明完整（三份换新/地址不变/新 24 词旧作废/Face ID 双确认/反诈提示），按钮「开始换钥匙」（执行边界）/「先不换」。此前「v2 无独立轮换入口」判断有误，已在飞书 Base（record `reczz28MNNXaNbKw`，状态=待确认、4 张截图）与测试报告文档中更正。
 - **issue 17 真实执行换钥匙失败（本轮新增）**：用户授权「真实验证一次换钥匙」并经「再试一次」完成第二次真实尝试——两次均通过恢复密码校验 + Face ID 确认后失败，服务端返回 `rotation_backup_proof_required`；失败屏仅「再试一次 / 关闭」，无原因说明、无替代路径；旧钥匙仍有效（未损坏）。根因推测：服务端 `has_backup_proof`（backup_shard_hash）门槛未满足，需产品/后端确认正常完成备份验证后是否应具备。已写入飞书 Base 序号 17（1 张失败屏截图）+ 本地 finding `FINDING-rotation-execution-failed.md`。
 - **飞书 Base 由用户整理**：Enclave 代码审查 6/7/8 三条已从 issue 表移除（Base 现 13 条）；issue 1 文档标注改为「已修复」。本地快照已同步。
