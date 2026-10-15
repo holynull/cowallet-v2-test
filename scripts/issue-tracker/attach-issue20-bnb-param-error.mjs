@@ -9,6 +9,8 @@
  * 同屏对照组：ARB 10 USDT→ETH 第二次执行，AI 已主动提议查订单是否真正到账（对应 issue 19 的正向改善）。
  * 第 3 例（2026-10-15 14:23 真机实拍 base-eth-usdc-param-error.png）：同一会话「Base 上的 0.002ETH 换 USDC」→
  *   同样「请求参数错误」堆叠 → 该错误不局限于 BSC；同屏「Base 0.002ETH 换 USDT」报「服务器错误，状态码：502」（见 issue 18 第 2 例）。
+ * 第 4 例（2026-10-15 14:33 真机实拍 polygon-60pol-to-usdt-param-error.png）：Polygon 上 POL→USDT 两次均报「请求参数错误」→
+ *   与「买入资产=USDT 报 502（issue 18 Base 例）」对照，同为 USDT 买入、不同链错误分类不同 → 疑按链/路由分流。
  *
  * 用法：
  *   node scripts/issue-tracker/attach-issue20-bnb-param-error.mjs        # dry-run
@@ -51,7 +53,11 @@ const ISSUE_NOTE =
   '【2026-10-15 14:23 真机复现（同 build；当前屏幕实拍，第 3 张截图）】同一会话输入「Base 上的 0.002ETH 换 USDC」' +
   '（Base 链 ETH→USDC，与 BSC/BNB 无关）→ **仍返回「请求参数错误」堆叠** → 该错误**不局限于 BSC**，原「BSC BNB↔USDT 路径/小写 symbol 映射」假设需放宽。' +
   '结合同屏「Base 0.002ETH 换 USDT」报「服务器错误，状态码：502」（见 issue 18 第 2 例）→ ' +
-  '后端按「买入资产路由」返回不同错误分类（USDC 买入→参数错误、USDT 买入→502），疑为后端各聚合器/路由错误映射不一致，需后端定位。';
+  '后端按「买入资产路由」返回不同错误分类（USDC 买入→参数错误、USDT 买入→502），疑为后端各聚合器/路由错误映射不一致，需后端定位。' +
+  '【2026-10-15 14:33 真机复现（同 build；当前屏幕实拍，第 4 张截图）】Polygon 上两次 POL→USDT 兑换均失败：' +
+  '「60pol换 USDT」与「Polygon 上60pol换 USDT」→ 均返回同样「请求参数错误」堆叠 → **该错误进一步覆盖 Polygon（POL→USDT）**。' +
+  '与 issue 18 第 2 例对照：同为「买入 USDT」，Base ETH→USDT 报 502、Polygon POL→USDT 报参数错误 → ' +
+  '错误分类不仅按买入资产，更疑按「链×路由（聚合器）」分流，需后端按链定位各路由错误映射。';
 
 const IMPACT =
   '中。兑换失败时用户收到无法理解的错误堆叠（含「请求参数错误」），无法判断失败环节，也无直接重试出口；' +

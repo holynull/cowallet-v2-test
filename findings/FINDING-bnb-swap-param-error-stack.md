@@ -11,6 +11,7 @@ Screenshots:
 - findings/assets/feishu-issue20-bnb-param-error/bnb-007-swap-param-error.png（13:49 对话：0.007bnb 换 USDT → 4 段堆叠错误；同屏 ARB 第二次兑换 AI 主动提议查终态）
 - findings/assets/feishu-issue20-bnb-param-error/bsc-all-usdt-to-bnb-param-error.png（13:58 当前屏幕实拍：bsc 上全部 USDT 换 bnb → 同样 4 段堆叠错误，含「请求参数错误」）
 - findings/assets/feishu-issue20-bnb-param-error/base-eth-usdc-param-error.png（14:23 同会话：Base 0.002ETH 换 USDC → 同样「请求参数错误」堆叠）
+- findings/assets/feishu-issue20-bnb-param-error/polygon-60pol-to-usdt-param-error.png（14:33 当前屏幕实拍：Polygon 60pol 换 USDT → 同样「请求参数错误」堆叠）
 
 ### 观察到
 
@@ -29,6 +30,8 @@ AI 聊天输入「**0.007bnb 换 USDT**」（BNB→USDT，未指明链，默认 
 
 **14:23 复现（第 3 例，Base 链）**：同一会话输入「**Base 上的 0.002ETH 换 USDC**」（Base 链 ETH→USDC，与 BSC/BNB 无关）→ **仍返回「请求参数错误」堆叠** → 该错误**不局限于 BSC**，原「BSC BNB↔USDT 路径/小写 symbol 映射」假设需放宽。结合同屏「Base 0.002ETH 换 USDT」报「服务器错误，状态码：502」（见 issue 18 第 2 例）→ 后端按「买入资产路由」返回不同错误分类（USDC 买入→参数错误、USDT 买入→502），疑为后端各聚合器/路由错误映射不一致。
 
+**14:33 复现（第 4 例，Polygon 链）**：当前屏幕新会话输入「**60pol换 USDT**」与「**Polygon 上60pol换 USDT**」**两次均失败**，返回同样「请求参数错误」堆叠 → 该错误**进一步覆盖 Polygon（POL→USDT）**。与 issue 18 第 2 例对照：同为「买入 USDT」，Base ETH→USDT 报 **502**、Polygon POL→USDT 报**参数错误** → 错误分类不仅按买入资产，更疑按「链×路由（聚合器）」分流，需后端按链定位各路由错误映射。
+
 ### 期望
 
 - 兑换失败只给**一条**可理解的失败文案，区分「参数/余额不足 / 无可用路线 / 服务暂不可用」；
@@ -45,10 +48,11 @@ AI 聊天输入「**0.007bnb 换 USDT**」（BNB→USDT，未指明链，默认 
 2. AI 聊天输入「0.007bnb 换 USDT」。
 3. 观察助手回复：4 段堆叠文案，含「请求参数错误」。
 4. （第 3 例）同会话输入「Base 上的 0.002ETH 换 USDC」→ 同样「请求参数错误」堆叠。
+5. （第 4 例）同会话输入「Polygon 上60pol换 USDT」→ 同样「请求参数错误」堆叠。
 
 **13:58 复现（第 2 例，方向相反）**：输入「bsc 上全部 USDT 换 bnb」（明确指定链 + 全部金额 + USDT→BNB）→ **同样**返回「请求参数错误」堆叠。
 
 ### 备注
 
 - 与 issue 18（OP 10USDT→ETH，暴露「服务器错误，状态码：502」）同属「失败态文案堆叠、无出口」UX 家族。
-- 三条独立触发（0.007bnb 换 USDT / bsc 上全部 USDT 换 bnb / Base 0.002ETH 换 USDC）均报「请求参数错误」→ 可排除「小写/未指明链/金额过小/BSC 专属」假设；**错误不局限于 BSC**，且与 502（issue 18）按买入资产路由分流，疑似后端各聚合器/路由的错误映射不一致，需后端定位。
+- 四条独立触发（0.007bnb 换 USDT / bsc 上全部 USDT 换 bnb / Base 0.002ETH 换 USDC / Polygon 60pol 换 USDT×2）均报「请求参数错误」→ 可排除「小写/未指明链/金额过小/链专属」假设；**错误跨 BSC/Base/Polygon 三链**，且与 502（issue 18：Base ETH→USDT 同为买入 USDT 却报 502）对比 → 错误分类疑按「链×路由（聚合器）」分流，疑似后端各聚合器/路由的错误映射不一致，需后端按链定位。
