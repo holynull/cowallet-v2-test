@@ -4,7 +4,7 @@
 > 本文件是测试战役的「当前状态基线」：环境、进度、结论、待办都在这里汇总。
 > 每次会话结束，更新本文件并重跑快照，让下一个会话能无缝接续。
 
-最后更新：2026-10-15 15:05（Asia/Shanghai）
+最后更新：2026-10-16 09:20（Asia/Shanghai）
 仓库：`/Users/zhangleping/github.com/holynull/cowallet-v2-test`（`main` 已 push 至 `e048807`：基线 `7a8b2f5` → issue3 纠错 `ef8cd15` → 报告重新生成+对齐 `e048807`；App 源码在兄弟仓库 `../cowallet`）
 Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4ml7`
 本地快照：`docs/issue-tracker/issue-status.md`（`node scripts/issue-tracker/snapshot-issues.mjs` 刷新）
@@ -54,8 +54,14 @@ Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4
 | ⏳ 待确认/待产品决策 | 3（**入口存在：设置→密钥安全→「换一套新钥匙」；真实执行失败见 17**）、9–13（低/中优先，本地 finding 已归档）、14（确认卡地址，T26 已复测）、15（AI 安全保护 not_applicable）、**17（真实执行换钥匙失败 `rotation_backup_proof_required`，失败屏无原因/替代路径）**、**18（兑换失败堆叠+暴露 502：OP 10USDT→ETH / Base 0.002ETH→USDT 两链复现，无重试/替代引导）**、**19（兑换源链上链后误报「已换成 ETH」实际 refunded：ARB 10USDT→ETH / ETH 主网 10.78USDT→ETH 跨链复现，需追问才暴露）**、**20（兑换失败堆叠含「请求参数错误」：BSC BNB↔USDT 双向 + Base 0.002ETH→USDC + Polygon 60pol→USDT 均触发，跨 BSC/Base/Polygon 三链，非链专属）**、**21（计划卡被取代/过期不清理：Base 未点按钮冒双卡 + Ethereum 真实执行中旧卡同样不清理、执行中新卡误标「已过期」）** |
 
 **本轮新增/更新**：
-- **测试报告文档（2026-10-15 兑换专项）**：新建 `docs/TEST-REPORT-2026-10-15.md` 并导入飞书 →
-  `https://catwallet.jp.larksuite.com/docx/U83PdKNlVoIfosxtylvjZaw3pHb`（`regenerate-report-doc.mjs` 已支持 `--md <path>` 指定来源）。
+- **手动测试问题记录去向（2026-10-16 起生效）**：CoWallet 手动测试（转账/兑换等）发现的问题，一律记录到新飞书 Base
+  `TlSrbWR2AadbY5sOkJfjFpe7ptd` / 表 `Issues`（https://catwallet.jp.larksuite.com/base/TlSrbWR2AadbY5sOkJfjFpe7ptd）。
+  字段：`Issue Key`（格式 `CW-YYYYMMDD-Mxx`）/ Project=cowallet / Platform / Title / Description / Impact / Status / Priority /
+  Reporter=QA-手动测试 / Source Channel=feishu / Attachments / Source Message（含原记录出处）。**已迁移** 2026-10-14~15 手动转账/兑换问题 6 条
+  （`CW-20261015-M05/M14/M18/M19/M20/M21`，含截图 20 张）。旧源 base `QVGLbx4zIauLNxsxPZYjHvSbpUh` 仅作历史参考。
+- **测试报告文档（2026-10-15 转账/兑换专项，重新生成）**：`docs/TEST-REPORT-2026-10-15.md` 为唯一事实源，**已按用户要求移除全部自动测试信息
+  （Midscene/Appium/WDA/DeepSeek 视觉模型/测试脚本/运行产物），转账与兑换均为手动测试**。导入飞书 →
+  `https://catwallet.jp.larksuite.com/docx/WDzYdWvBMoe5vZxspzKjXrBHpWg`；旧文档 `U83PdKNlVoIfosxtylvjZaw3pHb` 已删除。
   内容：六链转账全通过 + issue 18–21（兑换失败态/终态误报/双卡）+ issue 16 推送反转信号（待复测）。旧报告（10-12~14）仍以 `docs/TEST-REPORT-2026-10-14.md` 为事实源。
 - **issue 21（2026-10-15）**：新对话只发一条「Base 上的全部 USDC 换成 ETH」、未点任何按钮，即出现两张并存计划卡（旧 `c299acdf` 已过期 + 新 `a80e920f` 生效）；旧卡不清理、会话历史确认新对话（3 会话并存）。与 issue 19 同源（计划被取代/过期），本单重点是「未点按钮自动冒第二张卡 + 旧卡不清理」。已写入飞书 Base issue 21（中/待反馈/待确认，4 张截图）+ 本地 finding `FINDING-dual-plan-cards-auto.md`。
 - **issue 19 第 2 例（2026-10-15 14:48，Ethereum 主网，真实执行）**：输入「以太坊上 全部 USDT 换成 ETH」并真实执行（Face ID 用户手动），计划 35bf6c06 执行并已确认 34 区块；AI 先报「兑换已完成 / 卖出 10.781667 USDT 换成了 ETH / 已上链」，用户追问「到账了吗？」后改口「这笔没换成 — 订单状态是已退款（refund_complete），USDT 已经退回你的钱包，ETH 没到账。」→ **与第 1 例（ARB）同模式，跨链复现（Arbitrum + Ethereum 主网）**：源链 tx confirmed 即误报成功、失败退款需主动追问才暴露，非 ARB 独有，属结果终态口径 + 主动通知全局问题。已追加飞书 Base issue 19（中/待反馈/待确认，2 张截图）+ 本地 finding `FINDING-arb-swap-false-success-refund.md`。

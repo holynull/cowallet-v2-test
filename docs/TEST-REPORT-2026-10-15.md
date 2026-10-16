@@ -1,10 +1,10 @@
 # CoWallet v2 iOS 真机测试报告（2026-10-15 兑换专项）
 
 > 测试周期：2026-10-15（Asia/Shanghai）
-> 测试方式：真机黑盒 + AI 视觉驱动（Midscene / Appium + WebDriverAgent，视觉模型 DeepSeek `deepseek-v4-1-flash-260910`，effort=medium 防 429）
+> 测试方式：真机手动黑盒测试（转账 / 兑换均为人工在真机上手动执行，Face ID 由真人确认）
 > 被测版本：CoWallet v1.0.2（TestFlight build **2610141608**，2026-10-15 自动更新）
 > 测试重点：兑换（swap）真实交易专项 + 六链转账覆盖 + 新 build 收款推送信号复核
-> Issue 事实源：飞书 Base `QVGLbx4zIauLNxsxPZYjHvSbpUh` / 表 `tblQSxhJi3fb4ml7`
+> Issue 事实源：飞书 Base `TlSrbWR2AadbY5sOkJfjFpe7ptd` / 表 `Issues`（手动测试问题统一记录于此）
 
 ---
 
@@ -26,26 +26,25 @@
 | 设备 | iPhone 13 mini（iOS 26.6.1；Xcode 26.5），USB 真机 |
 | UDID | `00008110-000A6D3C3450401E` |
 | 被测 App | `app.getcowallet.wallet` v1.0.2 build **2610141608**（TestFlight 分发；更新链 2610121802 → 2610132055 → 2610141608） |
-| 驱动 | Midscene + Appium + WebDriverAgent（WDA `http://127.0.0.1:8100` 长驻复用） |
-| 视觉模型 | DeepSeek `deepseek-v4-1-flash-260910`（思考启用 + effort=medium + 重试 8 次，防 429，真机验证） |
+| 测试方式 | 人工在真机上手动操作（输入转账/兑换请求、核对确认卡、Face ID 由真人确认） |
 | 钱包地址 | EOA `0x7C0C85034Eb214EC6D5C8E5253BDC44f6A024821`（Ethereum 主网） |
 | 链上余额 | ≈ 0.0039777 ETH ≈ 总资产 $9.97（2026-10-14 基线；当日兑换所用 USDT 为另行转入，均已原路退回） |
 | 测试账号 | 邮箱 `reinpassion@gmail.com`（OTP 真人转述）；钱包密码仅存本地 `.env`，不入报告 |
-| 资金闸门 | `TEST_SAFE_EVM_RECEIVER=0x75276A6E673B4083b640956262605955F11D767B`；`MANUAL_CONFIRM_REAL_TRANSFER=true`；`MAX_TEST_TRANSFER_USD=5` |
+| 资金约束 | 真实资金动作需**当次明确授权**；收款白名单地址 `0x75276A…D767B`；单笔金额上限 5 USD |
 
 ## 3. 测试范围与方法
 
 **覆盖的功能域**
 
 - 六链真实转账（Ethereum / Base / Arbitrum / Optimism / BSC / Polygon）——全链路到账核对；
-- 兑换真实交易（AI 对话驱动，按手动指南）：报价卡字段、滑点、路由、确认卡、授权+兑换两段执行、链上终态；
+- 兑换真实交易（人工在 App 的 AI 聊天中手动输入请求，按手动指南）：报价卡字段、滑点、路由、确认卡、授权+兑换两段执行、链上终态；
 - 兑换失败态/边界：多链多币种（OP 10USDT→ETH、Base ETH→USDT/USDC、BSC BNB↔USDT、Polygon POL→USDT）只到确认卡或失败态；
 - 收款推送信号复核（新 build 2610141608）。
 
 **方法与约束**
 
-- 真实提交：当次授权 + 白名单/限额 + 确认卡核对（链/token/金额/地址/滑点）+ 真人 Face ID；AI 自动脚本只读、不代点确认；
-- 兑换请求由真人在 AI 聊天输入，脚本/人工只观察对话结果（计划卡、失败文案、执行进度、终态）；
+- 真实提交：当次授权 + 白名单/限额 + 确认卡核对（链/token/金额/地址/滑点）+ 真人 Face ID；全程人工操作，不代点确认；
+- 兑换请求由真人在 App 的 AI 聊天手动输入，人工观察对话结果（计划卡、失败文案、执行进度、终态）；
 - 失败态文案做「可理解的单一失败文案 + 明确出口」对照；
 - 已知环境噪声：TestFlight 自动更新 build、公共 RPC 瞬态归零（多 RPC 取最大值）、OTP 每小时 3 次限流。
 
@@ -112,7 +111,7 @@
 ## 7. 正向结果 / 无问题项
 
 - **六条支持链（Ethereum / Base / Arbitrum / Optimism / BSC / Polygon）真实转账全链路通过**，链名、币种、金额、到账均正确，无对应 issue。
-- **issue 16 反转信号（新 build 2610141608）**：收款页（前台）收到 `1 USDT（Ethereum）` 后出现系统级推送横幅「收到 1 USDT（Ethereum）/ 0xf779…c589 / 点一下看这笔」——旧 build 2610132055（T29）同一场景无任何资金 PUSH。疑似新 build 已补「收款到账推送」，**待后台/锁屏场景复测后更新 issue 16 状态**。
+- **issue 16 反转信号（新 build 2610141608）**：收款页（前台）收到 `1 USDT（Ethereum）` 后出现系统级推送横幅「收到 1 USDT（Ethereum）/ 0xf779…c589 / 点一下看这笔」——旧 build 2610132055 同一场景无任何资金 PUSH。疑似新 build 已补「收款到账推送」，**待后台/锁屏场景复测后更新 issue 16 状态**。
 
 ## 8. 风险与建议
 
@@ -124,22 +123,21 @@
 
 ## 9. 遗留事项 / 待办
 
-- **issue 16**：新 build 后台/锁屏收款 PUSH 复测（T29 式），通过则更新为已修复。
+- **issue 16**：新 build 后台/锁屏收款 PUSH 复测，通过则更新为已修复。
 - **issue 19**：真实资金 + 跨链复现，建议产品/后端确认「失败退款主动通知 + 结果卡终态口径」。
 - **issue 17**（前一轮遗留）：真实换钥匙失败 `rotation_backup_proof_required` 根因待产品/后端确认。
 - 兑换真实交易指南（`docs/2026-10-15-v102-manual-swap-real-tx-guide.md`）为本专项操作依据，后续轮次按链补打测试币后继续覆盖。
 
-## 附录 A：今日相关脚本/文档
+## 附录 A：今日相关文档/记录
 
 | 项 | 说明 |
 | --- | --- |
 | `docs/2026-10-15-v102-manual-swap-real-tx-guide.md` | 手动兑换真实交易测试指南（自旧项目移植适配） |
-| `scripts/issue-tracker/attach-issue18-swap-502.mjs` 等 | 今日 issue 记录/归档脚本（飞书 Base） |
+| 飞书 Base `TlSrbWR2AadbY5sOkJfjFpe7ptd` / `Issues` 表 | 手动测试问题统一记录处（本报告 6 条转账/兑换 issue 已迁入，Key 前缀 `CW-20261015-M`） |
 | `docs/TEST-CAMPAIGN-BASELINE.md` | 跨会话测试基线（本日已同步） |
-| `docs/issue-tracker/issue-status.md` | Issue 状态快照（`snapshot-issues.mjs` 刷新，18 条） |
+| `docs/issue-tracker/issue-status.md` | Issue 状态快照（18 条，历史记录） |
 
 ## 附录 B：证据索引
 
 - 截图证据：`findings/assets/feishu-issue18-swap-502/`、`feishu-issue19-arb-refund/`、`feishu-issue20-bnb-param-error/`、`feishu-issue21-dual-plan-cards/`、`feishu-issue16-newbuild-push/`（按 issue 分组，已挂飞书对应记录）
 - 本地 finding：`findings/FINDING-swap-502-error-stack.md`、`FINDING-arb-swap-false-success-refund.md`、`FINDING-bnb-swap-param-error-stack.md`、`FINDING-dual-plan-cards-auto.md`、`FINDING-push-receive-newbuild.md`
-- 逐次运行：`reports/<runName>/summary.json`（未入库，按需保留）
